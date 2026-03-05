@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Popenciuc Paul-Andrei — CV Personal</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #16161f;
+    --border: #1e1e2e;
+    --accent: #c8a97e;
+    --accent2: #7e9fc8;
+    --accent3: #9ec87e;
+    --text: #e8e6df;
+    --muted: #7a7870;
+    --dim: #3a3830;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom cursor */
+  .cursor {
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.1s;
+    mix-blend-mode: difference;
+  }
+  .cursor-ring {
+    width: 36px; height: 36px;
+    border: 1px solid var(--accent);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9998;
+    transition: all 0.15s ease;
+    mix-blend-mode: difference;
+    opacity: 0.5;
+  }
+
+  /* Noise texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+    opacity: 0.025;
+    pointer-events: none;
+    z-index: 9997;
+  }
+
+  /* Grid lines */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: 
+      linear-gradient(rgba(200,169,126,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(200,169,126,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ─── LAYOUT ─── */
+  .page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 40px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ─── HEADER / HERO ─── */
+  header {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 80px;
+    padding: 80px 0;
+    position: relative;
+  }
+
+  .hero-left { position: relative; }
+
+  .hero-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.2s forwards;
+  }
+  .hero-tag::before {
+    content: '';
+    width: 32px; height: 1px;
+    background: var(--accent);
+  }
+
+  .hero-name {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(52px, 6vw, 88px);
+    font-weight: 900;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.35s forwards;
+  }
+
+  .hero-name .italic {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .hero-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    margin-bottom: 40px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.5s forwards;
+  }
+
+  .hero-bio {
+    font-size: 15px;
+    line-height: 1.8;
+    color: #b5b2aa;
+    max-width: 420px;
+    margin-bottom: 48px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.65s forwards;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 16px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.8s forwards;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #0a0a0f;
+    padding: 14px 32px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-primary::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.15);
+    transform: translateX(-100%);
+    transition: transform 0.3s;
+  }
+  .btn-primary:hover::after { transform: translateX(0); }
+
+  .btn-outline {
+    border: 1px solid var(--dim);
+    color: var(--muted);
+    padding: 14px 32px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all 0.3s;
+  }
+  .btn-outline:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* Hero right - avatar/visual */
+  .hero-right {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    opacity: 0;
+    animation: fadeIn 1s ease 0.4s forwards;
+  }
+
+  .avatar-frame {
+    width: 340px;
+    height: 420px;
+    position: relative;
+  }
+
+  .avatar-bg {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--surface2) 0%, var(--surface) 100%);
+    border: 1px solid var(--border);
+  }
+
+  .avatar-placeholder {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+  }
+
+  .avatar-initials {
+    font-family: 'Playfair Display', serif;
+    font-size: 96px;
+    font-weight: 900;
+    color: var(--border);
+    line-height: 1;
+    user-select: none;
+  }
+
+  .avatar-decoration {
+    position: absolute;
+    top: -20px; right: -20px;
+    width: 100px; height: 100px;
+    border: 1px solid var(--accent);
+    opacity: 0.3;
+  }
+  .avatar-decoration-2 {
+    position: absolute;
+    bottom: -20px; left: -20px;
+    width: 60px; height: 60px;
+    background: var(--accent);
+    opacity: 0.08;
+  }
+
+  .status-badge {
+    position: absolute;
+    bottom: -16px;
+    left: 20px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+  }
+  .status-dot {
+    width: 6px; height: 6px;
+    background: var(--accent3);
+    border-radius: 50%;
+    animation: pulse 2s ease infinite;
+  }
+
+  /* Floating stats */
+  .hero-stats {
+    position: absolute;
+    right: -30px;
+    top: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+  .stat-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 16px 20px;
+    text-align: right;
+    min-width: 120px;
+  }
+  .stat-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .stat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  /* Scroll indicator */
+  .scroll-hint {
+    position: absolute;
+    bottom: 40px;
+    left: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    text-transform: uppercase;
+    animation: fadeIn 1s ease 1.2s both;
+  }
+  .scroll-line {
+    width: 1px;
+    height: 48px;
+    background: linear-gradient(var(--accent), transparent);
+    animation: scrollLine 2s ease infinite;
+  }
+
+  /* ─── SECTIONS ─── */
+  section {
+    padding: 120px 0;
+    border-top: 1px solid var(--border);
+    position: relative;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 24px;
+    margin-bottom: 80px;
+  }
+
+  .section-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.2em;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(36px, 4vw, 56px);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  .section-title .italic { font-style: italic; color: var(--accent); }
+
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ─── CONTACT ─── */
+  .contact-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: var(--border);
+  }
+
+  .contact-item {
+    background: var(--bg);
+    padding: 32px 40px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    transition: background 0.3s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .contact-item:hover { background: var(--surface); }
+
+  .contact-icon {
+    width: 48px; height: 48px;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+    color: var(--accent);
+    transition: all 0.3s;
+  }
+  .contact-item:hover .contact-icon {
+    background: var(--accent);
+    color: #0a0a0f;
+    border-color: var(--accent);
+  }
+
+  .contact-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .contact-value {
+    font-size: 15px;
+    color: var(--text);
+    font-weight: 400;
+  }
+
+  /* ─── SKILLS / INTERESTS ─── */
+  .interests-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+  }
+
+  .interest-category {
+    margin-bottom: 48px;
+  }
+
+  .interest-cat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .interest-cat-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .skill-bars { display: flex; flex-direction: column; gap: 16px; }
+
+  .skill-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .skill-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .skill-name {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--text);
+  }
+
+  .skill-pct {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+  }
+
+  .skill-track {
+    height: 2px;
+    background: var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .skill-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 1s ease;
+  }
+
+  .skill-fill.animate { transform: scaleX(1); }
+
+  /* Tags */
+  .tag-cloud { display: flex; flex-wrap: wrap; gap: 8px; }
+
+  .tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    padding: 8px 16px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    text-transform: uppercase;
+    transition: all 0.3s;
+    cursor: default;
+  }
+  .tag:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(200,169,126,0.05);
+  }
+
+  .tag.accent { border-color: var(--accent); color: var(--accent); }
+  .tag.blue { border-color: var(--accent2); color: var(--accent2); }
+  .tag.green { border-color: var(--accent3); color: var(--accent3); }
+
+  /* ─── PROJECTS ─── */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+  }
+
+  .project-card {
+    background: var(--bg);
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+    cursor: default;
+  }
+  .project-card:hover { background: var(--surface); }
+
+  .project-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 0;
+    background: var(--accent);
+    transition: height 0.4s ease;
+  }
+  .project-card:hover::before { height: 100%; }
+
+  .project-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--dim);
+    margin-bottom: 24px;
+  }
+
+  .project-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    line-height: 1.2;
+  }
+
+  .project-desc {
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+
+  .project-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 32px;
+  }
+
+  .project-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    padding: 4px 10px;
+    background: var(--surface2);
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .project-link {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    text-decoration: none;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: gap 0.3s;
+  }
+  .project-link:hover { gap: 14px; }
+
+  .project-card.featured {
+    grid-column: span 2;
+    background: var(--surface);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: center;
+  }
+
+  .project-featured-visual {
+    height: 200px;
+    background: linear-gradient(135deg, var(--surface2), var(--border));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 48px;
+    font-weight: 900;
+    color: var(--dim);
+    letter-spacing: -0.02em;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .project-featured-visual::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(45deg, transparent 40%, rgba(200,169,126,0.05) 100%);
+  }
+
+  /* ─── EXPERIENCE TIMELINE ─── */
+  .timeline { position: relative; padding-left: 40px; }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 8px; bottom: 8px;
+    width: 1px;
+    background: var(--border);
+  }
+
+  .timeline-item {
+    position: relative;
+    padding-bottom: 60px;
+  }
+
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -44px; top: 6px;
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+  }
+
+  .timeline-date {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .timeline-role {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .timeline-org {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 16px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 0.1em;
+  }
+
+  .timeline-desc {
+    font-size: 14px;
+    line-height: 1.7;
+    color: #8a8880;
+    max-width: 560px;
+  }
+
+  /* ─── HOBBIES ─── */
+  .hobbies-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+  }
+
+  .hobby-card {
+    background: var(--bg);
+    padding: 40px 32px;
+    text-align: center;
+    transition: background 0.3s;
+    cursor: default;
+  }
+  .hobby-card:hover { background: var(--surface); }
+
+  .hobby-icon {
+    font-size: 36px;
+    margin-bottom: 20px;
+    display: block;
+    filter: grayscale(1) brightness(0.7);
+    transition: filter 0.3s;
+  }
+  .hobby-card:hover .hobby-icon { filter: none; }
+
+  .hobby-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .hobby-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  /* ─── FOOTER ─── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 60px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+  }
+  .footer-logo span { color: var(--accent); font-style: italic; }
+
+  .footer-copy {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  /* ─── ANIMATIONS ─── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  @keyframes scrollLine {
+    0% { transform: scaleY(0); transform-origin: top; }
+    50% { transform: scaleY(1); transform-origin: top; }
+    50.01% { transform: scaleY(1); transform-origin: bottom; }
+    100% { transform: scaleY(0); transform-origin: bottom; }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Responsive */
+  @media (max-width: 900px) {
+    header { grid-template-columns: 1fr; gap: 60px; }
+    .hero-right { display: none; }
+    .interests-layout { grid-template-columns: 1fr; gap: 40px; }
+    .projects-grid { grid-template-columns: 1fr; }
+    .project-card.featured { grid-column: span 1; grid-template-columns: 1fr; }
+    .hobbies-grid { grid-template-columns: repeat(2, 1fr); }
+    .contact-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<div class="page">
+
+  <!-- ═══ HEADER ═══ -->
+  <header>
+    <div class="hero-left">
+      <div class="hero-tag">Curriculum Vitae — 2026</div>
+      <h1 class="hero-name">
+        Paul-Andrei<br><span class="italic">Popenciuc</span>
+      </h1>
+      <p class="hero-title">Student &amp; Calculatoare</p>
+      <p class="hero-bio">
+        Pasionat de crearea de experiențe digitale memorabile, la intersecția dintre 
+        inginerie software și design vizual. Construiesc produse care funcționează 
+        impecabil și arată extraordinar.
+      </p>
+      <div class="hero-actions">
+        <a href="#contact" class="btn-primary">Contactează-mă</a>
+        <a href="#proiecte" class="btn-outline">Vezi proiectele</a>
+      </div>
+
+      <div class="scroll-hint">
+        <div class="scroll-line"></div>
+        Scroll
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <div class="avatar-frame">
+        <div class="avatar-bg"></div>
+        <div class="avatar-placeholder">
+          <div class="avatar-initials">AI</div>
+        </div>
+        <div class="avatar-decoration"></div>
+        <div class="avatar-decoration-2"></div>
+        <div class="status-badge">
+          <div class="status-dot"></div>
+          Disponibil pentru proiecte
+        </div>
+      </div>
+
+      <div class="hero-stats">
+        <div class="stat-card">
+          <div class="stat-number">5</div>
+          <div class="stat-label">Proiecte</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══ CONTACT ═══ -->
+  <section id="contact">
+    <div class="section-header reveal">
+      <span class="section-num">01</span>
+      <h2 class="section-title">Date de <span class="italic">contact</span></h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="contact-grid reveal">
+      <a href="mailto:popenciucandrei@email.com" class="contact-item">
+        <div class="contact-icon">✉</div>
+        <div>
+          <div class="contact-label">Email</div>
+          <div class="contact-value">popenciucandrei@email.com</div>
+        </div>
+      </a>
+      <a href="tel:+40753356441" class="contact-item">
+        <div class="contact-icon">✆</div>
+        <div>
+          <div class="contact-label">Telefon</div>
+          <div class="contact-value">+40 753356441</div>
+        </div>
+      </a>
+      <a href="#" class="contact-item">
+        <div class="contact-icon">⌖</div>
+        <div>
+          <div class="contact-label">Locație</div>
+          <div class="contact-value">Lapus, România</div>
+        </div>
+      </a>
+      <a href="https://linkedin.com" class="contact-item" target="_blank">
+        <div class="contact-icon">in</div>
+      </a>
+      <a href="https://github.com/Deyutzu" class="contact-item" target="_blank">
+        <div class="contact-icon">⌥</div>
+        <div>
+          <div class="contact-label">GitHub</div>
+          <div class="contact-value">github.com/Deyutzu</div>
+        </div>
+      </a>
+      <a href="#" class="contact-item">
+        <div class="contact-icon">◈</div>
+      </a>
+    </div>
+  </section>
+
+  <!-- ═══ INTERESE & SKILLS ═══ -->
+  <section id="interese">
+    <div class="section-header reveal">
+      <span class="section-num">02</span>
+      <h2 class="section-title">Domenii de <span class="italic">interes</span></h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="interests-layout">
+      <div class="reveal">
+        <div class="interest-category">
+          <div class="interest-cat-label">Tehnic</div>
+          <div class="skill-bars">
+            <div class="skill-row">
+              <div class="skill-meta">
+                <span class="skill-name">C++</span>
+                <span class="skill-pct">70%</span>
+              </div>
+              <div class="skill-track"><div class="skill-fill" data-width="0.94"></div></div>
+            </div>
+            <div class="skill-row">
+              <div class="skill-meta">
+                <span class="skill-name">C#</span>
+                <span class="skill-pct">68%</span>
+              </div>
+              <div class="skill-track"><div class="skill-fill" data-width="0.88"></div></div>
+            </div>
+            <div class="skill-row">
+              <div class="skill-meta">
+                <span class="skill-name">UI/UX Design </span>
+                <span class="skill-pct">60%</span>
+              </div>
+              <div class="skill-track"><div class="skill-fill" data-width="0.82"></div></div>
+            </div>
+            <div class="skill-row">
+              <div class="skill-meta">
+                <span class="skill-name">Python / Machine Learning</span>
+                <span class="skill-pct">30%</span>
+              </div>
+              <div class="skill-track"><div class="skill-fill" data-width="0.75"></div></div>
+            </div>
+            <div class="skill-row">
+              <div class="skill-meta">
+                <span class="skill-name">PostgreSQL / MongoDB</span>
+                <span class="skill-pct">50%</span>
+              </div>
+              <div class="skill-track"><div class="skill-fill" data-width="0.80"></div></div>
+            </div>
+            <div class="skill-row">
+              <div class="skill-meta">
+                <span class="skill-name">Cisco</span>
+                <span class="skill-pct">70%</span>
+              </div>
+              <div class="skill-track"><div class="skill-fill" data-width="0.70"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="reveal">
+        <div class="interest-category">
+          <div class="interest-cat-label">Domenii de pasiune</div>
+          <div class="tag-cloud">
+            <span class="tag accent">Inteligență Artificială</span>
+            <span class="tag blue">Design de Produs</span>
+            <span class="tag green">Open Source</span>
+            <span class="tag">Arhitectură Software</span>
+            <span class="tag">Web3 / Blockchain</span>
+            <span class="tag blue">Vizualizare Date</span>
+            <span class="tag">Accesibilitate Web</span>
+            <span class="tag accent">Creative Coding</span>
+            <span class="tag">Game Development</span>
+            <span class="tag green">Sustenabilitate Tech</span>
+          </div>
+        </div>
+
+        <div class="interest-category">
+          <div class="interest-cat-label">Limbi vorbite</div>
+          <div class="skill-bars">
+            <div class="skill-row">
+              <div class="skill-meta">
+                <span class="skill-name">Română</span>
+                <span class="skill-pct">Nativ</span>
+              </div>
+              <div class="skill-track"><div class="skill-fill" data-width="1"></div></div>
+            </div>
+            <div class="skill-row">
+              <div class="skill-meta">
+                <span class="skill-name">Engleză</span>
+                <span class="skill-pct">B2</span>
+              </div>
+              <div class="skill-track"><div class="skill-fill" data-width="0.90"></div></div>
+            </div>
+              
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ PROIECTE ═══ -->
+  <section id="proiecte">
+    <div class="section-header reveal">
+      <span class="section-num">03</span>
+      <h2 class="section-title">Proiecte <span class="italic">realizate</span></h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="projects-grid reveal">
+
+      <div class="project-card featured">
+        <div class="project-featured-visual">Blockbreaker</div>
+        <div>
+          <div class="project-num">001 — Primul proiect</div>
+          <h3 class="project-title">BlockBreaker</h3>
+          <p class="project-desc">Joc interactiv creat cu ajutorul limbajului Java.</p>
+          <div class="project-tags">
+            <span class="project-tag">Java</span>
+          </div>
+          <a href="#" class="project-link">Detalii proiect →</a>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-num">002</div>
+        <h3 class="project-title">Sistem de managerizare a unei pensiuni </h3>
+        <p class="project-desc">Un sistem pentru managerizarea, eficientizarea și modernizarea Pensiunii Schilacy. Aplicatia manager pentru "Pensiunea Schilacy" este solutia software dezvoltata pentru a aduce aceasta pensiune in era tehnologiei. Ca obiective principale, avem digitalizarea si reducerea de timp a check-in-ului si a check-out-ului.</p>
+        <div class="project-tags">
+          <span class="project-tag">Python</span>
+         
+        </div>
+        <a href="#" class="project-link">Ver proiect →</a>
+      </div>
+
+      <div class="project-card">
+        <div class="project-num">003</div>
+        <h3 class="project-title">Sistem de gestiune Service Auto</h3>
+        <p class="project-desc">Sistem de gestiune destinat service-urilor auto pentru a eficientiza spatiul de lucru.</p>
+        <div class="project-tags">
+          <span class="project-tag">React</span>
+        </div>
+        <a href="#" class="project-link">GitHub →</a>
+      </div>
+
+      <div class="project-card">
+        <div class="project-num">004</div>
+        <h3 class="project-title">Sistem de gestiune al unei locatii de schimb valutar</h3>
+        <p class="project-desc">Sistem de gestiune destinat locatiilor de schimb valutar pentru a ajuta si a eficientiza munca in acest spatiu.</p>
+        <div class="project-tags">
+          <span class="project-tag">React</span>
+          <span class="project-tag">Python</span>
+        </div>
+        <a href="#" class="project-link">Demo live →</a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══ EXPERIENȚĂ ═══ -->
+  <section id="experienta">
+    <div class="section-header reveal">
+      <span class="section-num">04</span>
+      <h2 class="section-title">Experiență <span class="italic">profesională</span></h2>
+      <div class="section-line"></div>
+    </div>
+
+      <div class="timeline-item">
+        <div class="timeline-date">2025</div>
+        <div class="timeline-role">Practica de Domeniu</div>
+        <div class="timeline-org">Selectsoft</div>
+        <p class="timeline-desc">Practica de domeniu, in cadrul companiei SelectSoft ca si Costumer Support.</p>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-date">2021</div>
+        <div class="timeline-role">Voluntariat</div>
+        <div class="timeline-org">Maramures Ballon Fiesta</div>
+        <p class="timeline-desc">Voluntariat in cadrul unui eveniment spectaculos cu baloane cu aer cald.</p>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-date">2019-2023</div>
+        <div class="timeline-role">Diploma Bacalaureat</div>
+        <div class="timeline-org">Liceul Teoretic Petru Rares Targu Lapus</div>
+        <p class="timeline-desc">Specializare Matematica-Informatica intensiv Informatica.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ HOBBY ═══ -->
+  <section id="hobby">
+    <div class="section-header reveal">
+      <span class="section-num">05</span>
+      <h2 class="section-title">Pasiuni & <span class="italic">hobby</span></h2>
+      <div class="section-line"></div>
+    </div>
+
+    <div class="hobbies-grid reveal">
+      <div class="hobby-card">
+        <span class="hobby-icon">⚽</span>
+        <div class="hobby-name">Fotbal</div>
+        <p class="hobby-desc">Analist sportiv in timpul liber, pe facebook Sergi Lopez.</p>
+      </div>
+      <div class="hobby-card">
+        <span class="hobby-icon">♟</span>
+        <div class="hobby-name">Șah</div>
+        <p class="hobby-desc">Jucător activ online. Rating Lichess: 1840 Elo. Pasionat de deschideri moderne.</p>
+      </div>
+      <div class="hobby-card">
+        <span class="hobby-icon">🎵</span>
+        <div class="hobby-name">Muzică</div>
+        <p class="hobby-desc">Ascultarea de muzica pentru creier.</p>
+      </div>
+      <div class="hobby-card">
+        <span class="hobby-icon">🏔</span>
+        <div class="hobby-name">Drumeții</div>
+        <p class="hobby-desc">Trasee montane, în special Carpații. Bucegi, Fagaraș, Retezat.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer>
+    <div class="footer-logo">Andrei<span>.P.P</span></div>
+    <div class="footer-copy">© 2026 Popenciuc Paul-Andrei — Toate drepturile rezervate</div>
+  </footer>
+
+</div>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
+
+  document.addEventListener('mousemove', e => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    cursor.style.left = mouseX - 4 + 'px';
+    cursor.style.top = mouseY - 4 + 'px';
+  });
+
+  function animRing() {
+    ringX += (mouseX - ringX - 18) * 0.12;
+    ringY += (mouseY - ringY - 18) * 0.12;
+    ring.style.left = ringX + 'px';
+    ring.style.top = ringY + 'px';
+    requestAnimationFrame(animRing);
+  }
+  animRing();
+
+  document.querySelectorAll('a, button, .tag, .project-card, .hobby-card, .contact-item').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.transform = 'scale(3)';
+      ring.style.transform = 'scale(1.5)';
+      ring.style.opacity = '0.3';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.transform = 'scale(1)';
+      ring.style.transform = 'scale(1)';
+      ring.style.opacity = '0.5';
+    });
+  });
+
+  // Reveal on scroll
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 80);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+
+  // Skill bars animation
+  const skillFills = document.querySelectorAll('.skill-fill');
+  const skillObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const fill = entry.target;
+        const w = parseFloat(fill.dataset.width);
+        fill.style.transform = `scaleX(${w})`;
+        skillObserver.unobserve(fill);
+      }
+    });
+  }, { threshold: 0.5 });
+  skillFills.forEach(f => skillObserver.observe(f));
+
+  // Smooth scroll
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+</script>
+</body>
+</html>
