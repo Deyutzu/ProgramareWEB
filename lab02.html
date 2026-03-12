@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pensiunea Valea Verde – Natură, Liniște și Confort</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --forest: #2d4a2d; --moss: #4a7c59; --sage: #8ab08c;
+      --cream: #f5f0e8;  --gold: #c8a04a; --bark: #6b4c2a; --light: #faf7f2;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { font-family:'Lato',sans-serif; background:var(--light); color:#333; overflow-x:hidden; }
+
+    /* ── NAVBAR ── */
+    nav {
+      position:fixed; top:0; left:0; right:0; z-index:200;
+      display:flex; justify-content:space-between; align-items:center;
+      padding:1.2rem 3rem;
+      background:transparent;
+      transition:background .4s, padding .4s, box-shadow .4s;
+    }
+    nav.scrolled {
+      background:rgba(28,46,28,.95); backdrop-filter:blur(10px);
+      padding:.65rem 3rem; box-shadow:0 3px 20px rgba(0,0,0,.25);
+    }
+    nav .logo { font-family:'Playfair Display',serif; font-size:1.4rem; color:var(--gold); text-decoration:none; letter-spacing:.05em; }
+    nav ul { list-style:none; display:flex; gap:1.6rem; }
+    nav ul li a {
+      color:#e8f5e9; text-decoration:none; font-size:.82rem;
+      letter-spacing:.06em; text-transform:uppercase; transition:color .2s;
+      position:relative; padding-bottom:3px;
+    }
+    nav ul li a::after { content:''; position:absolute; bottom:0; left:0; width:0; height:2px; background:var(--gold); transition:width .3s; }
+    nav ul li a:hover::after { width:100%; }
+    nav ul li a:hover { color:var(--gold); }
+
+    /* ── SCROLL TO TOP ── */
+    #scrollTop {
+      position:fixed; bottom:2rem; right:2rem; z-index:300;
+      width:50px; height:50px; border-radius:50%;
+      background:var(--forest); color:var(--gold);
+      border:2px solid var(--gold); font-size:1.5rem;
+      display:flex; align-items:center; justify-content:center;
+      cursor:pointer; opacity:0; pointer-events:none;
+      transition:opacity .35s, transform .25s;
+      box-shadow:0 4px 18px rgba(0,0,0,.28);
+    }
+    #scrollTop.show { opacity:1; pointer-events:all; }
+    #scrollTop:hover { transform:translateY(-4px) scale(1.1); }
+
+    /* ── HERO + PARALLAX ── */
+    #hero {
+      position:relative; height:100vh; min-height:620px;
+      overflow:hidden; display:flex; flex-direction:column;
+      align-items:center; justify-content:center; text-align:center; color:#fff;
+    }
+    #hero-bg {
+      position:absolute; inset:0; will-change:transform;
+      background:
+        linear-gradient(160deg,rgba(45,74,45,.72) 0%,rgba(74,124,89,.45) 60%,rgba(200,160,74,.25) 100%),
+        url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1800&q=80') center/cover no-repeat;
+      transform:scale(1.12);
+    }
+    #hero::after {
+      content:''; position:absolute; bottom:-2px; left:0; right:0;
+      height:90px; background:var(--light); clip-path:ellipse(55% 100% at 50% 100%); z-index:2;
+    }
+    #hero h1 {
+      position:relative; z-index:1;
+      font-family:'Playfair Display',serif; font-size:clamp(2.6rem,6vw,5.2rem);
+      text-shadow:0 4px 28px rgba(0,0,0,.5); animation:fadeDown .9s ease both; letter-spacing:.02em;
+    }
+    #hero h2 {
+      position:relative; z-index:1;
+      font-family:'Playfair Display',serif; font-style:italic; font-weight:400;
+      font-size:clamp(1rem,2.5vw,1.7rem); margin-top:.6rem; color:#e8f5e9; animation:fadeDown 1.1s ease both;
+    }
+    .hero-btns { position:relative; z-index:1; display:flex; gap:1rem; margin-top:2.2rem; flex-wrap:wrap; justify-content:center; }
+    .hero-btn {
+      display:inline-block; padding:.85rem 2.4rem;
+      background:var(--gold); color:var(--forest);
+      font-weight:700; font-size:1rem; letter-spacing:.08em;
+      text-decoration:none; border-radius:40px;
+      box-shadow:0 6px 20px rgba(0,0,0,.28); animation:fadeUp 1.3s ease both;
+      transition:transform .2s, box-shadow .2s;
+    }
+    .hero-btn:hover { transform:translateY(-3px); box-shadow:0 12px 28px rgba(0,0,0,.32); }
+    .hero-btn-outline { background:transparent; color:#fff; border:2px solid rgba(255,255,255,.7); }
+    .hero-btn-outline:hover { background:rgba(255,255,255,.12); }
+
+    /* ── LEAVES CANVAS ── */
+    #leaves-canvas { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:50; }
+
+    /* ── STATS ── */
+    #stats { background:var(--forest); padding:2.8rem 2rem; display:flex; justify-content:center; gap:0; flex-wrap:wrap; }
+    .stat-item { text-align:center; color:#fff; padding:1rem 3rem; border-right:1px solid rgba(255,255,255,.15); }
+    .stat-item:last-child { border-right:none; }
+    .stat-num { font-family:'Playfair Display',serif; font-size:2.8rem; color:var(--gold); display:block; line-height:1; }
+    .stat-label { font-size:.8rem; color:var(--sage); letter-spacing:.08em; text-transform:uppercase; margin-top:.3rem; display:block; }
+
+    /* ── SECTION GENERIC ── */
+    section { padding:5.5rem 2rem; }
+    .section-title { font-family:'Playfair Display',serif; font-size:clamp(1.8rem,4vw,2.8rem); color:var(--forest); text-align:center; margin-bottom:.5rem; }
+    .section-sub { text-align:center; color:var(--moss); font-size:1rem; margin-bottom:3rem; font-style:italic; }
+    .divider { width:60px; height:3px; background:var(--gold); margin:.6rem auto 2.8rem; border-radius:2px; }
+
+    /* ── DESPRE ── */
+    #despre { background:var(--cream); }
+    .despre-grid { max-width:1100px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:3rem; align-items:center; }
+    .despre-text p { line-height:1.9; margin-bottom:1rem; color:#444; }
+    .despre-img { border-radius:14px; overflow:hidden; box-shadow:0 16px 48px rgba(45,74,45,.22); animation:floatImg 6s ease-in-out infinite; }
+    .despre-img img { width:100%; display:block; transition:transform .4s; }
+    .despre-img:hover img { transform:scale(1.04); }
+
+    /* ── CAMERE ── */
+    #camere { background:var(--light); }
+    .camere-grid { max-width:1100px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:2rem; }
+    .camera-card { background:#fff; border-radius:14px; overflow:hidden; box-shadow:0 8px 32px rgba(45,74,45,.10); transition:transform .3s,box-shadow .3s; opacity:0; transform:translateY(30px); }
+    .camera-card.visible { animation:slideUp .6s ease forwards; }
+    .camera-card:hover { transform:translateY(-6px); box-shadow:0 18px 48px rgba(45,74,45,.18); }
+    .camera-card img { width:100%; height:210px; object-fit:cover; display:block; }
+    .camera-info { padding:1.4rem 1.6rem; }
+    .camera-info h3 { font-family:'Playfair Display',serif; color:var(--forest); font-size:1.25rem; margin-bottom:.4rem; }
+    .camera-info p { color:#555; font-size:.92rem; line-height:1.7; }
+    .price-tag { display:inline-block; margin-top:.8rem; background:var(--forest); color:var(--gold); padding:.3rem 1rem; border-radius:20px; font-weight:700; font-size:.88rem; letter-spacing:.05em; }
+
+    /* ── SERVICII TABLE ── */
+    #servicii { background:var(--cream); }
+    .table-wrap { max-width:900px; margin:0 auto; overflow-x:auto; border-radius:12px; box-shadow:0 8px 32px rgba(45,74,45,.12); }
+    table { width:100%; border-collapse:collapse; background:#fff; }
+    th { background:var(--forest); color:#fff; font-family:'Playfair Display',serif; font-size:1rem; padding:1rem 1.4rem; text-align:left; }
+    td { padding:.85rem 1.4rem; border-bottom:1px solid #e8e0d5; font-size:.93rem; color:#444; vertical-align:middle; }
+    tr:last-child td { border-bottom:none; }
+    tr:nth-child(even) td { background:#f9f5ef; }
+    tr:hover td { background:#f0ece4; }
+    .badge { display:inline-block; padding:.2rem .7rem; border-radius:10px; font-size:.78rem; font-weight:700; letter-spacing:.04em; }
+    .badge-yes { background:#d4edda; color:#155724; }
+    .badge-no  { background:#f8d7da; color:#721c24; }
+    .badge-extra { background:#fff3cd; color:#856404; }
+
+    /* ── GALLERY SLIDER ── */
+    #galerie { background:var(--forest); padding:5.5rem 2rem; }
+    #galerie .section-title { color:var(--cream); }
+    #galerie .section-sub   { color:var(--sage); }
+    #galerie .divider       { background:var(--gold); }
+    .gallery-slider { max-width:1100px; margin:0 auto; position:relative; overflow:hidden; border-radius:16px; }
+    .gallery-track  { display:flex; transition:transform .5s cubic-bezier(.4,0,.2,1); }
+    .gallery-slide  { min-width:100%; position:relative; cursor:pointer; overflow:hidden; border-radius:16px; }
+    .gallery-slide img { width:100%; height:520px; object-fit:cover; display:block; transition:transform .5s; }
+    .gallery-slide:hover img { transform:scale(1.03); }
+    .gallery-caption {
+      position:absolute; bottom:0; left:0; right:0;
+      background:linear-gradient(transparent,rgba(18,38,18,.88));
+      color:#fff; padding:2rem 1.8rem 1.4rem;
+      font-family:'Playfair Display',serif; font-size:1.1rem;
+    }
+    .gallery-caption span { font-family:'Lato',sans-serif; font-size:.82rem; color:var(--sage); display:block; margin-top:.25rem; }
+    .slider-btn {
+      position:absolute; top:50%; transform:translateY(-50%); z-index:10;
+      background:rgba(45,74,45,.78); color:#fff; border:2px solid rgba(200,160,74,.5);
+      border-radius:50%; width:52px; height:52px; font-size:1.4rem;
+      display:flex; align-items:center; justify-content:center;
+      cursor:pointer; transition:background .2s,transform .2s; backdrop-filter:blur(4px);
+    }
+    .slider-btn:hover { background:var(--forest); transform:translateY(-50%) scale(1.1); }
+    .slider-btn.prev { left:1rem; }
+    .slider-btn.next { right:1rem; }
+    .slider-dots { display:flex; justify-content:center; gap:.6rem; margin-top:1.2rem; }
+    .dot { width:10px; height:10px; border-radius:50%; background:rgba(255,255,255,.3); cursor:pointer; transition:background .3s,transform .2s; }
+    .dot.active { background:var(--gold); transform:scale(1.3); }
+
+    /* ── LIGHTBOX ── */
+    #lightbox {
+      position:fixed; inset:0; z-index:1000; background:rgba(8,18,8,.96);
+      display:none; align-items:center; justify-content:center; animation:fadeIn .25s ease;
+    }
+    #lightbox.open { display:flex; }
+    #lightbox img { max-width:90vw; max-height:88vh; border-radius:8px; box-shadow:0 24px 80px rgba(0,0,0,.6); animation:scaleIn .3s ease; }
+    #lightbox-close { position:absolute; top:1.2rem; right:1.6rem; color:#fff; font-size:2.4rem; cursor:pointer; line-height:1; transition:color .2s,transform .2s; }
+    #lightbox-close:hover { color:var(--gold); transform:rotate(90deg); }
+    #lightbox-caption { position:absolute; bottom:1.4rem; left:50%; transform:translateX(-50%); color:#ccc; font-family:'Playfair Display',serif; font-size:1rem; white-space:nowrap; }
+
+    /* ── TABS ACTIVITATI ── */
+    #activitati { background:var(--light); }
+    .tabs-header { display:flex; justify-content:center; margin-bottom:2.5rem; border-radius:50px; overflow:hidden; max-width:500px; margin-left:auto; margin-right:auto; box-shadow:0 4px 18px rgba(45,74,45,.15); }
+    .tab-btn { flex:1; padding:.75rem .8rem; border:none; cursor:pointer; background:#e8e4dc; color:#555; font-family:'Lato',sans-serif; font-size:.82rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; transition:background .25s,color .25s; }
+    .tab-btn.active { background:var(--forest); color:var(--gold); }
+    .tab-btn:hover:not(.active) { background:#d6d0c6; }
+    .tab-content { display:none; max-width:900px; margin:0 auto; }
+    .tab-content.active { display:grid; grid-template-columns:1fr 1fr; gap:2.5rem; animation:fadeIn .4s ease; }
+    .season-img { border-radius:12px; overflow:hidden; box-shadow:0 8px 28px rgba(45,74,45,.14); }
+    .season-img img { width:100%; height:280px; object-fit:cover; display:block; }
+    .season-info h3 { font-family:'Playfair Display',serif; color:var(--forest); font-size:1.4rem; margin-bottom:1rem; }
+    .season-info ul { padding-left:1.4rem; line-height:2.2; color:#444; }
+    .season-info ul li::marker { color:var(--gold); }
+
+    /* ── TESTIMONIALE ── */
+    #testimoniale { background:var(--cream); }
+    .testi-grid { max-width:1100px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:1.8rem; }
+    .testi-card { background:#fff; border-radius:14px; padding:2rem; box-shadow:0 8px 28px rgba(45,74,45,.09); position:relative; transition:transform .3s,box-shadow .3s; opacity:0; transform:translateY(20px); }
+    .testi-card.visible { animation:slideUp .55s ease forwards; }
+    .testi-card:hover { transform:translateY(-5px); box-shadow:0 16px 40px rgba(45,74,45,.15); }
+    .testi-card::before { content:'"'; position:absolute; top:.4rem; left:1.2rem; font-family:'Playfair Display',serif; font-size:5.5rem; color:var(--sage); opacity:.2; line-height:1; }
+    .stars { color:#f0b429; font-size:1.1rem; margin-bottom:.8rem; }
+    .testi-text { color:#444; line-height:1.8; font-style:italic; font-size:.93rem; margin-bottom:1.2rem; }
+    .testi-author { display:flex; align-items:center; gap:.8rem; }
+    .testi-avatar { width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Playfair Display',serif; font-size:1.15rem; font-weight:700; color:#fff; flex-shrink:0; }
+    .testi-name { font-weight:700; color:var(--forest); font-size:.9rem; }
+    .testi-loc  { font-size:.78rem; color:#888; }
+
+    /* ── FACILITATI ── */
+    #facilitati { background:var(--light); }
+    .fac-wrap { max-width:1000px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:3rem; }
+    .fac-box h3 { font-family:'Playfair Display',serif; color:var(--forest); margin-bottom:1rem; font-size:1.3rem; }
+    ul.fac-list, ol.fac-list { padding-left:1.4rem; line-height:2.1; color:#444; }
+    ul.fac-list li::marker { color:var(--gold); }
+    ol.fac-list li::marker { color:var(--moss); font-weight:700; }
+
+    /* ── FAQ ACCORDION ── */
+    #faq { background:var(--cream); }
+    .faq-wrap { max-width:780px; margin:0 auto; }
+    .faq-item { background:#fff; border-radius:12px; margin-bottom:.9rem; box-shadow:0 4px 16px rgba(45,74,45,.07); overflow:hidden; transition:box-shadow .25s; }
+    .faq-item:hover { box-shadow:0 8px 26px rgba(45,74,45,.13); }
+    .faq-question { width:100%; text-align:left; padding:1.25rem 1.6rem; background:transparent; border:none; cursor:pointer; display:flex; justify-content:space-between; align-items:center; font-family:'Playfair Display',serif; font-size:1.05rem; color:var(--forest); font-weight:700; transition:color .2s; }
+    .faq-question:hover { color:var(--moss); }
+    .faq-icon { width:28px; height:28px; border-radius:50%; background:var(--forest); color:var(--gold); display:flex; align-items:center; justify-content:center; font-size:1.2rem; transition:transform .35s,background .25s; flex-shrink:0; }
+    .faq-item.open .faq-icon { transform:rotate(45deg); background:var(--moss); }
+    .faq-answer { max-height:0; overflow:hidden; transition:max-height .4s ease; padding:0 1.6rem; }
+    .faq-answer p { padding-bottom:1.2rem; color:#555; line-height:1.8; font-size:.93rem; }
+    .faq-item.open .faq-answer { max-height:280px; }
+
+    /* ── REZERVARE FORM ── */
+    #rezervare { background:var(--light); }
+    .form-wrap { max-width:780px; margin:0 auto; background:#fff; border-radius:16px; box-shadow:0 12px 48px rgba(45,74,45,.14); overflow:hidden; }
+    .form-header { background:var(--forest); color:#fff; padding:1.8rem 2.4rem; }
+    .form-header h3 { font-family:'Playfair Display',serif; font-size:1.5rem; }
+    .form-header p  { font-size:.88rem; color:var(--sage); margin-top:.3rem; }
+    form { padding:2rem 2.4rem; }
+    fieldset { border:1px solid #ddd; border-radius:10px; padding:1.4rem 1.6rem; margin-bottom:1.6rem; }
+    legend   { font-family:'Playfair Display',serif; color:var(--forest); font-size:1rem; padding:0 .5rem; font-weight:700; }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem; }
+    .form-group { display:flex; flex-direction:column; gap:.35rem; margin-bottom:.9rem; }
+    label { font-size:.82rem; font-weight:700; color:var(--forest); letter-spacing:.04em; text-transform:uppercase; }
+    input[type="text"], input[type="email"], input[type="date"], input[type="number"], input[type="tel"], select, textarea {
+      padding:.65rem 1rem; border:1.5px solid #d4c9b8; border-radius:8px; font-family:'Lato',sans-serif; font-size:.92rem; background:#faf7f2; color:#333; transition:border-color .2s,box-shadow .2s;
+    }
+    input:focus, select:focus, textarea:focus { outline:none; border-color:var(--moss); box-shadow:0 0 0 3px rgba(74,124,89,.15); }
+    .checkbox-row { display:flex; align-items:center; gap:.6rem; margin:.5rem 0; font-size:.92rem; color:#444; cursor:pointer; }
+    .checkbox-row input { width:16px; height:16px; accent-color:var(--moss); }
+    .submit-btn { width:100%; padding:1rem; background:var(--forest); color:#fff; font-family:'Playfair Display',serif; font-size:1.1rem; letter-spacing:.05em; border:none; border-radius:10px; cursor:pointer; margin-top:.5rem; transition:background .25s,transform .2s; }
+    .submit-btn:hover { background:var(--moss); transform:translateY(-2px); }
+
+    /* ── CONTACT ── */
+    #contact { background:var(--forest); color:#e8f5e9; padding:4.5rem 2rem; }
+    #contact .section-title { color:var(--cream); }
+    #contact .divider { background:var(--gold); }
+    .contact-grid { max-width:900px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:2rem; text-align:center; }
+    .contact-item { padding:1.5rem; }
+    .contact-icon { font-size:2rem; margin-bottom:.6rem; }
+    .contact-item h4 { font-family:'Playfair Display',serif; color:var(--gold); margin-bottom:.4rem; }
+    .contact-item p, .contact-item a { color:var(--sage); text-decoration:none; font-size:.92rem; line-height:1.7; }
+    .contact-item a:hover { color:var(--gold); }
+
+    /* ── FOOTER ── */
+    footer { background:#1a2d1a; color:#7a9c7a; text-align:center; padding:1.6rem; font-size:.82rem; }
+    footer a { color:var(--gold); text-decoration:none; }
+    footer a:hover { text-decoration:underline; }
+
+    /* ── TOAST ── */
+    #toast {
+      position:fixed; bottom:5rem; left:50%; transform:translateX(-50%) translateY(20px);
+      background:var(--forest); color:#fff; padding:.85rem 2.2rem; border-radius:30px;
+      font-size:.92rem; opacity:0; pointer-events:none; transition:opacity .3s,transform .3s;
+      box-shadow:0 6px 24px rgba(0,0,0,.25); z-index:400; border-left:4px solid var(--gold);
+    }
+    #toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+    /* ── KEYFRAMES ── */
+    @keyframes fadeDown { from{opacity:0;transform:translateY(-30px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes fadeUp   { from{opacity:0;transform:translateY(30px)}  to{opacity:1;transform:translateY(0)} }
+    @keyframes slideUp  { from{opacity:0;transform:translateY(30px)}  to{opacity:1;transform:translateY(0)} }
+    @keyframes fadeIn   { from{opacity:0} to{opacity:1} }
+    @keyframes scaleIn  { from{opacity:0;transform:scale(.88)} to{opacity:1;transform:scale(1)} }
+    @keyframes floatImg { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:768px){
+      .despre-grid,.fac-wrap,.tab-content.active{grid-template-columns:1fr}
+      .form-row{grid-template-columns:1fr}
+      nav ul{display:none}
+      .gallery-slide img{height:300px}
+      .stat-item{padding:.8rem 1.5rem}
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="leaves-canvas"></canvas>
+
+<!-- ── NAVBAR ─────────────────────────────────────────────── -->
+<nav id="navbar">
+  <a href="#hero" class="logo" title="Pensiunea Valea Verde – Acasă">🌿 Valea Verde</a>
+  <ul>
+    <li><a href="#despre"       title="Despre noi">Despre</a></li>
+    <li><a href="#camere"       title="Camere">Camere</a></li>
+    <li><a href="#galerie"      title="Galerie">Galerie</a></li>
+    <li><a href="#activitati"   title="Activități">Activități</a></li>
+    <li><a href="#testimoniale" title="Recenzii">Recenzii</a></li>
+    <li><a href="#faq"          title="FAQ">FAQ</a></li>
+    <li><a href="#rezervare"    title="Rezervare">Rezervare</a></li>
+  </ul>
+</nav>
+
+<div id="scrollTop" title="Înapoi sus" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</div>
+
+<!-- ── HERO ───────────────────────────────────────────────── -->
+<div id="hero">
+  <div id="hero-bg"></div>
+  <h1>Pensiunea Valea Verde</h1>
+  <h2><em>Natură, liniște și ospitalitate autentică</em></h2>
+  <div class="hero-btns">
+    <a href="#rezervare" class="hero-btn"               title="Rezervă o cameră">Rezervă Acum ↓</a>
+    <a href="#galerie"   class="hero-btn hero-btn-outline" title="Galerie foto">Galerie Foto</a>
+  </div>
+</div>
+
+<!-- ── STATS ──────────────────────────────────────────────── -->
+<div id="stats">
+  <div class="stat-item"><span class="stat-num" data-target="500" data-suffix="+">0</span><span class="stat-label">Oaspeți fericiți</span></div>
+  <div class="stat-item"><span class="stat-num" data-target="12"  data-suffix="">0</span><span class="stat-label">Ani de activitate</span></div>
+  <div class="stat-item"><span class="stat-num" data-target="8"   data-suffix="">0</span><span class="stat-label">Camere disponibile</span></div>
+  <div class="stat-item"><span class="stat-num" data-target="98"  data-suffix="%">0</span><span class="stat-label">Recenzii pozitive</span></div>
+</div>
+
+<!-- ── DESPRE ─────────────────────────────────────────────── -->
+<section id="despre">
+  <h2 class="section-title">Despre Pensiunea Noastră</h2>
+  <p class="section-sub">Un colț de rai în inima munților Tibles</p>
+  <div class="divider"></div>
+  <div class="despre-grid">
+    <div class="despre-text">
+      <p><strong>Pensiunea Valea Verde</strong> este o destinație ideală pentru cei care caută <span style="color:var(--moss);font-weight:700;">liniște</span>, aer curat și confort autentic. Situată la poalele munților Tibles, la doar 3 km de Grosii Tiblesului.</p>
+      <p>Construită în stil tradițional românesc cu lemn și piatră, <b>Valea Verde</b> îmbină rusticul cu modernul — camere confortabile, mic dejun cu produse locale și o grădină cu priveliști la 360°.</p>
+      <p>Fie că veniți în <span style="color:var(--bark);">vacanță de vară</span>, la drumeții de toamnă sau la schi iarna, locul nostru vă așteaptă cu brațele deschise tot timpul anului.</p>
+      <br/>
+      <a href="#camere" title="Descoperă camerele" style="color:var(--forest);font-weight:700;text-decoration:underline;">→ Descoperă camerele noastre</a>
+    </div>
+    <div class="despre-img">
+      <img src="https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800&q=80"
+           alt="Vedere exterioară pensiune" width="800" height="500" title="Pensiunea Valea Verde – exterior"/>
+    </div>
+  </div>
+</section>
+
+<!-- ── CAMERE ─────────────────────────────────────────────── -->
+<section id="camere">
+  <h2 class="section-title">Camerele Noastre</h2>
+  <p class="section-sub">Confort și căldură în fiecare detaliu</p>
+  <div class="divider"></div>
+  <div class="camere-grid">
+    <div class="camera-card">
+      <img src="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=600&q=80" alt="Camera Standard" width="600" height="400" title="Camera Standard"/>
+      <div class="camera-info"><h3>Camera Standard</h3><p>Pat dublu, baie privată, TV și vedere la grădină. Perfectă pentru cupluri.</p><span class="price-tag">200 RON / noapte</span></div>
+    </div>
+    <div class="camera-card">
+      <img src="https://images.unsplash.com/photo-1586105251261-72a756497a11?w=600&q=80" alt="Camera Deluxe" width="600" height="400" title="Camera Deluxe"/>
+      <div class="camera-info"><h3>Camera Deluxe</h3><p><strong>Balcon privat</strong> cu panoramă la munte, pat king-size și cadă jacuzzi.</p><span class="price-tag">320 RON / noapte</span></div>
+    </div>
+    <div class="camera-card">
+      <img src="https://images.unsplash.com/photo-1555854877-bab0e564b8d5?w=600&q=80" alt="Apartament Family" width="600" height="400" title="Apartament Family"/>
+      <div class="camera-info"><h3>Apartament Family</h3><p>Două dormitoare, living și <strong>bucătărie utilată</strong>. Capacitate: 2+2 persoane.</p><span class="price-tag">480 RON / noapte</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SERVICII TABLE ─────────────────────────────────────── -->
+<section id="servicii">
+  <h2 class="section-title">Servicii & Facilități</h2>
+  <p class="section-sub">Tot ce aveți nevoie pentru un sejur perfect</p>
+  <div class="divider"></div>
+  <div class="table-wrap">
+    <table border="0" width="100%">
+      <tr>
+        <th width="35%" align="left"   valign="middle">Serviciu</th>
+        <th width="20%" align="center" valign="middle">Standard</th>
+        <th width="20%" align="center" valign="middle">Deluxe</th>
+        <th width="25%" align="center" valign="middle">Family</th>
+      </tr>
+      <tr><td align="left" valign="middle"><strong>🍳 Mic dejun inclus</strong></td><td align="center"><span class="badge badge-yes">DA</span></td><td align="center"><span class="badge badge-yes">DA</span></td><td align="center"><span class="badge badge-yes">DA</span></td></tr>
+      <tr><td align="left" valign="middle"><strong>🌿 Grădină și terasă</strong></td><td align="center"><span class="badge badge-yes">DA</span></td><td align="center"><span class="badge badge-yes">DA</span></td><td align="center"><span class="badge badge-yes">DA</span></td></tr>
+      <tr><td align="left" valign="middle"><strong>🛁 Cadă jacuzzi</strong></td><td align="center"><span class="badge badge-no">NU</span></td><td align="center"><span class="badge badge-yes">DA</span></td><td align="center"><span class="badge badge-extra">EXTRA</span></td></tr>
+      <tr><td align="left" valign="middle"><strong>🔥 Șemineu privat</strong></td><td align="center"><span class="badge badge-no">NU</span></td><td align="center"><span class="badge badge-yes">DA</span></td><td align="center"><span class="badge badge-yes">DA</span></td></tr>
+      <tr><td align="left" valign="middle"><strong>🚗 Parcare gratuită</strong></td><td align="center"><span class="badge badge-yes">DA</span></td><td align="center"><span class="badge badge-yes">DA</span></td><td align="center"><span class="badge badge-yes">DA</span></td></tr>
+      <tr><td align="left" valign="middle"><strong>📶 Wi-Fi</strong></td><td align="center"><span class="badge badge-yes">DA</span></td><td align="center"><span class="badge badge-yes">DA</span></td><td align="center"><span class="badge badge-yes">DA</span></td></tr>
+      <tr><td align="left" valign="middle"><strong>🐾 Animale de companie</strong></td><td align="center"><span class="badge badge-extra">EXTRA</span></td><td align="center"><span class="badge badge-extra">EXTRA</span></td><td align="center"><span class="badge badge-yes">DA</span></td></tr>
+      <tr><td colspan="4" align="center" bgcolor="#f5f0e8" style="padding:1rem;font-style:italic;color:#666;font-size:.88rem;">* Prețurile variază în funcție de sezon. <a href="#contact" title="Contactați-ne">Contactați-ne</a> pentru oferte personalizate.</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- ── GALERIE SLIDER ─────────────────────────────────────── -->
+<section id="galerie">
+  <h2 class="section-title">Galerie Foto</h2>
+  <p class="section-sub">Click pe imagine pentru a o vizualiza mărită</p>
+  <div class="divider"></div>
+  <div class="gallery-slider">
+    <div class="gallery-track" id="galleryTrack">
+      <div class="gallery-slide" onclick="openLightbox(0)">
+        <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhwx3Y8eghQlaB31VOJhHYxH54rXH2NFdsXQDxmB6cnsjqoPbo208q0IqaONPt8lFKUtD2mt6cVrhHzEwItOrMoLgY8g2EXSXMJi11q-5Ziq11iKJca2tq1ltakQMV6AjqzVvXGny7fxlnz/w1200-h630-p-k-no-nu/PICT0029.JPG" alt="Apus de soare în munți" width="1200" height="520" title="Peisaj montan – apus"/>
+        <div class="gallery-caption">Muntii Tibles <span>Vedere panoramică a muntilor de pe creasta cea mica</span></div>
+      </div>
+      <div class="gallery-slide" onclick="openLightbox(1)">
+        <img src="https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=1200&q=85" alt="Camera Deluxe interior" width="1200" height="520" title="Camera Deluxe"/>
+        <div class="gallery-caption">Camera Deluxe <span>Confort și eleganță în fiecare detaliu</span></div>
+      </div>
+      <div class="gallery-slide" onclick="openLightbox(2)">
+        <img src="https://www.via-profi.ro/wp-content/uploads/2023/06/Mancare-traditionala.jpg" alt="Mic dejun tradițional" width="1200" height="520" title="Mic dejun"/>
+        <div class="gallery-caption">Mic dejun tradițional <span>Produse 100% locale și bio</span></div>
+      </div>
+      <div class="gallery-slide" onclick="openLightbox(3)">
+        <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200&q=85" alt="Piscina exterioară" width="1200" height="520" title="Piscina exterioară"/>
+        <div class="gallery-caption">Piscina exterioară <span>Relaxare cu priveliște la munte</span></div>
+      </div>
+      <div class="gallery-slide" onclick="openLightbox(4)">
+        <img src="https://images.unsplash.com/photo-1510798831971-661eb04b3739?w=1200&q=85" alt="Trasee drumeție" width="1200" height="520" title="Drumeții"/>
+        <div class="gallery-caption">Trasee de drumeție <span>Peste 30 km de trasee marcate în jur</span></div>
+      </div>
+    </div>
+    <button class="slider-btn prev" onclick="moveSlider(-1)" title="Imaginea anterioară">&#8592;</button>
+    <button class="slider-btn next" onclick="moveSlider(1)"  title="Imaginea următoare">&#8594;</button>
+  </div>
+  <div class="slider-dots" id="sliderDots">
+    <div class="dot active" onclick="goToSlide(0)"></div>
+    <div class="dot" onclick="goToSlide(1)"></div>
+    <div class="dot" onclick="goToSlide(2)"></div>
+    <div class="dot" onclick="goToSlide(3)"></div>
+    <div class="dot" onclick="goToSlide(4)"></div>
+  </div>
+</section>
+
+<!-- ── LIGHTBOX ───────────────────────────────────────────── -->
+<div id="lightbox" onclick="closeLightbox(event)">
+  <span id="lightbox-close" onclick="closeLightbox()">&times;</span>
+  <img id="lightbox-img" src="" alt="Imagine mărită"/>
+  <div id="lightbox-caption"></div>
+</div>
+
+<!-- ── ACTIVITATI SEZONIERE ──────────────────────────────── -->
+<section id="activitati">
+  <h2 class="section-title">Activități Sezoniere</h2>
+  <p class="section-sub">În fiecare anotimp, o aventură nouă</p>
+  <div class="divider"></div>
+  <div class="tabs-header">
+    <button class="tab-btn active" onclick="switchTab(event,'vara')"     title="Vară">☀️ Vară</button>
+    <button class="tab-btn"       onclick="switchTab(event,'toamna')"   title="Toamnă">🍂 Toamnă</button>
+    <button class="tab-btn"       onclick="switchTab(event,'iarna')"    title="Iarnă">❄️ Iarnă</button>
+    <button class="tab-btn"       onclick="switchTab(event,'primavara')" title="Primăvară">🌸 Primăvară</button>
+  </div>
+  <div id="tab-vara" class="tab-content active">
+    <div class="season-img"><img src="https://images.unsplash.com/photo-1501854140801-50d01698950b?w=700&q=80" alt="Munți vara" width="700" height="280" title="Vară în munți"/></div>
+    <div class="season-info"><h3>🌲 Vară în munți</h3><ul><li>Drumeții pe trasee de toate nivelele</li><li>Ciclism montan cu biciclete închiriate</li><li>Pescuit la râul din apropiere</li><li>Picnic în poienile din jur</li><li>Piscina exterioară a pensiunii</li><li>Seri cu foc de tabără</li></ul></div>
+  </div>
+  <div id="tab-toamna" class="tab-content">
+    <div class="season-img"><img src="https://www.antena3.ro/thumbs/amp/2019/09/23/sezonul-de-toamna-cele-mai-ciudate-curiozitati-despre-toamna-ce-se-intampla-daca-prinzi-frunzele-de-615861.webp" alt="Pădure toamna" width="700" height="280" title="Toamnă"/></div>
+    <div class="season-info"><h3>🍂 Toamnă colorată</h3><ul><li>Culesul fructelor de pădure</li><li>Fotografie în natură</li><li>Drumeții pentru admirarea culorilor</li><li>Degustare de must și țuică naturală</li><li>Șemineu și seară liniștită</li><li>Ciupercărit ghidat cu localnici</li></ul></div>
+  </div>
+  <div id="tab-iarna" class="tab-content">
+    <div class="season-img"><img src="https://images.unsplash.com/photo-1519681393784-d120267933ba?w=700&q=80" alt="Peisaj iarnă" width="700" height="280" title="Iarnă"/></div>
+    <div class="season-info"><h3>❄️ Iarnă de poveste</h3><ul><li>Schi și snowboard (pârtii la 8 km)</li><li>Sanie tradițională pe dealuri</li><li>Plimbări cu sania trasă de cai</li><li>Spa și relaxare la căldura sobei</li><li>Crăciun și Revelion festiv</li><li>Fotografii în peisaj alb</li></ul></div>
+  </div>
+  <div id="tab-primavara" class="tab-content">
+    <div class="season-img"><img src="https://images.unsplash.com/photo-1462275646964-a0e3386b89fa?w=700&q=80" alt="Primăvară înflorită" width="700" height="280" title="Primăvară"/></div>
+    <div class="season-info"><h3>🌸 Primăvară înflorită</h3><ul><li>Trasee printre narcise și ghiocei</li><li>Observarea păsărilor migratoare</li><li>Ateliere de pictură în natură</li><li>Rafting pe râul Arieș</li><li>Apicultură cu localnici</li><li>Picnic în livezile înflorite</li></ul></div>
+  </div>
+</section>
+
+<!-- ── TESTIMONIALE ───────────────────────────────────────── -->
+<section id="testimoniale">
+  <h2 class="section-title">Ce Spun Oaspeții Noștri</h2>
+  <p class="section-sub">Peste 500 de familii mulțumite</p>
+  <div class="divider"></div>
+  <div class="testi-grid">
+    <div class="testi-card">
+      <div class="stars">★★★★★</div>
+      <p class="testi-text">Am petrecut 5 zile la Valea Verde și a fost o experiență de neuitat. Camerele sunt impecabile, mâncarea delicioasă și priveliștea absolut superbă!</p>
+      <div class="testi-author">
+        <div class="testi-avatar" style="background:#4a7c59;">A</div>
+        <div><div class="testi-name">Andreea Popa</div><div class="testi-loc">📍 Cluj-Napoca</div></div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="stars">★★★★★</div>
+      <p class="testi-text">Am venit cu familia de Revelion – seara cu șemineu, masa festivă, zăpada afară... pur și simplu magic! Personalul este extraordinar de primitor.</p>
+      <div class="testi-author">
+        <div class="testi-avatar" style="background:#c8a04a;color:#2d4a2d;">M</div>
+        <div><div class="testi-name">Mihai Ionescu</div><div class="testi-loc">📍 București</div></div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="stars">★★★★☆</div>
+      <p class="testi-text">Locație de vis, aer curat și natură sălbatică la doi pași. Micul dejun cu produse locale este cel mai bun pe care l-am mâncat vreodată!</p>
+      <div class="testi-author">
+        <div class="testi-avatar" style="background:#6b4c2a;">L</div>
+        <div><div class="testi-name">Laura Munteanu</div><div class="testi-loc">📍 Timișoara</div></div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="stars">★★★★★</div>
+      <p class="testi-text">Al treilea an consecutiv la Valea Verde și nu ne-am plictisit! Fiecare sezon aduce ceva special. Prețuri foarte corecte pentru ce oferiți.</p>
+      <div class="testi-author">
+        <div class="testi-avatar" style="background:#2d4a2d;">R</div>
+        <div><div class="testi-name">Radu & Elena Dumitrescu</div><div class="testi-loc">📍 Sibiu</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FACILITATI ─────────────────────────────────────────── -->
+<section id="facilitati">
+  <h2 class="section-title">De ce să ne alegeți?</h2>
+  <p class="section-sub">Motive să reveniți an de an</p>
+  <div class="divider"></div>
+  <div class="fac-wrap">
+    <div class="fac-box">
+      <h3>🌲 Activități în natură</h3>
+      <ul class="fac-list">
+        <li>Drumeții pe trasee marcate</li>
+        <li>Ciclism montan cu biciclete închiriate</li>
+        <li>Pescuit la râul din apropiere</li>
+        <li>Observarea florei și faunei</li>
+        <li>Picnic în poiană</li>
+        <li>Schi și snowboard iarna</li>
+      </ul>
+    </div>
+    <div class="fac-box">
+      <h3>🏡 Top 5 motive să veniți</h3>
+      <ol class="fac-list">
+        <li><strong>Liniște autentică</strong> – departe de agitația orașului</li>
+        <li><strong>Mâncare gătită</strong> – produse 100% locale și bio</li>
+        <li><strong>Prețuri accesibile</strong> – raport calitate-preț excelent</li>
+        <li><strong>Locație pitorească</strong> – munți, păduri, aer curat</li>
+        <li><strong>Ospitalitate caldă</strong> – tratament de familie</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ── FAQ ACCORDION ─────────────────────────────────────── -->
+<section id="faq">
+  <h2 class="section-title">Întrebări Frecvente</h2>
+  <p class="section-sub">Tot ce trebuie să știți înainte de vizită</p>
+  <div class="divider"></div>
+  <div class="faq-wrap">
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)" title="Răspuns">
+        Care este programul de check-in și check-out? <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer"><p>Check-in-ul este posibil între orele <strong>14:00 – 22:00</strong>, iar check-out-ul trebuie efectuat până la <strong>12:00</strong>. Depozitarea bagajelor este gratuită la cerere.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)" title="Răspuns">
+        Se acceptă animale de companie? <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer"><p>Da! Acceptăm animale mici și medii cu un <strong>cost suplimentar de 50 RON/noapte</strong>. Grădina este special amenajată pentru ei. Menționați la rezervare dacă veniți cu un animal.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)" title="Răspuns">
+        Există posibilitatea de a lua masa la pensiune? <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer"><p>Micul dejun este inclus. Cina se comandă cu <strong>24h înainte</strong> la 60 RON/persoană. Mâncăruri tradiționale românești cu produse locale și bio.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)" title="Răspuns">
+        Care este politica de anulare? <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer"><p>Anulările cu mai mult de <strong>7 zile înainte</strong> sunt gratuite. Între 3-7 zile se rețin 50%. Sub 3 zile se rețin integral. În caz de forță majoră oferim flexibilitate maximă.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question" onclick="toggleFaq(this)" title="Răspuns">
+        Cum ajungem la pensiune? <span class="faq-icon">+</span>
+      </button>
+      <div class="faq-answer"><p><strong>Cu mașina:</strong> DJ171 până la Grosii Tiblesului, apoi urmați indicatoarele spre Str. Calea Muntelui. <strong>Cu trenul:</strong> gara Dej + MaxiTaxi 1 ora. Parcarea este gratuită.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── REZERVARE FORM ─────────────────────────────────────── -->
+<section id="rezervare">
+  <h2 class="section-title">Rezervare Online</h2>
+  <p class="section-sub">Completați formularul și vă confirmăm în 24h</p>
+  <div class="divider"></div>
+  <div class="form-wrap">
+    <div class="form-header">
+      <h3>Formular de Rezervare</h3>
+      <p>Câmpurile marcate cu * sunt obligatorii</p>
+    </div>
+    <form name="rezervare" target="_self" onsubmit="handleSubmit(event)">
+      <fieldset>
+        <legend>👤 Date Personale</legend>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="nume">Nume complet *</label>
+            <input type="text" id="nume" name="nume" placeholder="Ex: Ionescu Maria" maxlength="60" size="30" value="" title="Introduceți numele complet"/>
+          </div>
+          <div class="form-group">
+            <label for="email">Email *</label>
+            <input type="email" id="email" name="email" placeholder="exemplu@email.com" maxlength="80" size="30" title="Email pentru confirmare"/>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="telefon">Telefon</label>
+            <input type="tel" id="telefon" name="telefon" placeholder="+40 7xx xxx xxx" maxlength="15" size="20" title="Număr de contact"/>
+          </div>
+          <div class="form-group">
+            <label for="nationalitate">Naționalitate</label>
+            <input type="text" id="nationalitate" name="nationalitate" value="Română" readonly size="20" title="Pre-completat"/>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>📅 Detalii Sejur</legend>
+        <div class="form-row">
+          <div class="form-group"><label for="check_in">Check-in *</label><input type="date" id="check_in" name="check_in" title="Data sosirii"/></div>
+          <div class="form-group"><label for="check_out">Check-out *</label><input type="date" id="check_out" name="check_out" title="Data plecării"/></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label for="nr_persoane">Adulți *</label><input type="number" id="nr_persoane" name="nr_persoane" value="2" min="1" max="6" step="1" title="Nr. adulți"/></div>
+          <div class="form-group"><label for="nr_copii">Copii (sub 12 ani)</label><input type="number" id="nr_copii" name="nr_copii" value="0" min="0" max="4" step="1" title="Nr. copii"/></div>
+        </div>
+        <div class="form-group">
+          <label for="tip_camera">Tipul camerei *</label>
+          <select id="tip_camera" name="tip_camera" size="1" title="Alegeți camera">
+            <option value="" selected>-- Selectați camera --</option>
+            <option value="standard">Camera Standard – 200 RON/noapte</option>
+            <option value="deluxe">Camera Deluxe – 320 RON/noapte</option>
+            <option value="family">Apartament Family – 480 RON/noapte</option>
+          </select>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>✨ Servicii Suplimentare</legend>
+        <label class="checkbox-row"><input type="checkbox" name="mic_dejun" value="mic_dejun" checked title="Mic dejun"/> Mic dejun (+30 RON/persoană/zi)</label>
+        <label class="checkbox-row"><input type="checkbox" name="cina" value="cina" title="Cină tradițională"/> Cină tradițională (+60 RON/persoană/zi)</label>
+        <label class="checkbox-row"><input type="checkbox" name="spa" value="spa" title="Acces SPA"/> Acces SPA (+50 RON/zi)</label>
+        <label class="checkbox-row"><input type="checkbox" name="transfer" value="transfer" disabled title="Indisponibil"/> Transfer aeroport (indisponibil momentan)</label>
+        <div class="form-group" style="margin-top:1rem;">
+          <label for="preferinte">Transport preferat</label>
+          <select id="preferinte" name="preferinte" multiple size="3" title="Ctrl+Click – selecție multiplă">
+            <option value="masina" selected>Mașină proprie</option>
+            <option value="autocar">Autocar</option>
+            <option value="tren">Tren + taxi</option>
+            <option value="transfer">Transfer privat</option>
+          </select>
+          <span style="font-size:.78rem;color:#888;margin-top:.3rem;">Ctrl+Click pentru selecție multiplă</span>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>💬 Mesaj & Cerințe Speciale</legend>
+        <div class="form-group">
+          <label for="mesaj">Cereri speciale</label>
+          <textarea id="mesaj" name="mesaj" rows="5" cols="50" maxlength="600" placeholder="Ex: cameră la etaj, pat suplimentar, aniversare..." title="Cereri speciale"></textarea>
+        </div>
+        <label class="checkbox-row"><input type="radio" name="contact_pref" value="email" checked title="Prin email"/> Confirmați prin email</label>
+        <label class="checkbox-row"><input type="radio" name="contact_pref" value="telefon" title="Prin telefon"/> Confirmați prin telefon</label>
+      </fieldset>
+      <input type="submit" value="Trimite Rezervarea →" class="submit-btn" title="Trimite rezervarea"/>
+    </form>
+  </div>
+</section>
+
+<!-- ── CONTACT ────────────────────────────────────────────── -->
+<section id="contact">
+  <h2 class="section-title">Contact</h2>
+  <div class="divider"></div>
+  <div class="contact-grid">
+    <div class="contact-item"><div class="contact-icon">📍</div><h4>Adresă</h4><p>Str. Calea Muntelui nr. 412<br/>Grosii Tiblesului, jud. Maramures<br/>România</p></div>
+    <div class="contact-item"><div class="contact-icon">📞</div><h4>Telefon</h4><a href="tel:+40745123456" title="Apelați-ne">+40 745 123 456</a></div>
+    <div class="contact-item"><div class="contact-icon">✉️</div><h4>Email</h4><a href="mailto:contact@valeaverde.ro" title="Scrieți-ne">contact@valeaverde.ro</a></div>
+    <div class="contact-item"><div class="contact-icon">🌐</div><h4>Social Media</h4><a href="#" target="_blank" title="Facebook">Facebook</a><br/><a href="#" target="_blank" title="Instagram">Instagram</a></div>
+  </div>
+</section>
+
+<!-- ── FOOTER ─────────────────────────────────────────────── -->
+<footer>
+  <p>&copy; 2025 <strong>Pensiunea Valea Verde</strong> &mdash;
+    <a href="#hero" title="Înapoi sus">↑ Sus</a> &nbsp;|&nbsp;
+    <a href="#rezervare" title="Rezervare">Rezervare</a> &nbsp;|&nbsp;
+    <a href="#contact" title="Contact">Contact</a>
+  </p>
+  <p style="margin-top:.4rem;color:#4a6b4a;font-size:.78rem;">Realizat ca tema de laborator – Programare WEB</p>
+</footer>
+
+<div id="toast">✅ Rezervarea a fost trimisă! Vă confirmăm în 24h.</div>
+
+<!-- ══ JAVASCRIPT ════════════════════════════════════════════ -->
+<script>
+/* ── NAVBAR + SCROLL-TO-TOP ─── */
+const navbar    = document.getElementById('navbar');
+const scrollBtn = document.getElementById('scrollTop');
+window.addEventListener('scroll', () => {
+  const y = window.scrollY;
+  navbar.classList.toggle('scrolled', y > 60);
+  scrollBtn.classList.toggle('show', y > 400);
+});
+
+/* ── PARALLAX HERO ─── */
+const heroBg = document.getElementById('hero-bg');
+window.addEventListener('scroll', () => {
+  if (window.scrollY < window.innerHeight * 1.2)
+    heroBg.style.transform = `scale(1.12) translateY(${window.scrollY * 0.28}px)`;
+}, { passive: true });
+
+/* ── FALLING LEAVES (Canvas) ─── */
+(function() {
+  const canvas = document.getElementById('leaves-canvas');
+  const ctx    = canvas.getContext('2d');
+  let W, H, leaves = [];
+  const EMOJIS = ['🍃','🍂','🍁','🌿','☘️'];
+
+  function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+  resize();
+  window.addEventListener('resize', resize);
+
+  function newLeaf(randomY) {
+    return {
+      x: Math.random() * W,
+      y: randomY ? Math.random() * H : -30,
+      size: 13 + Math.random() * 13,
+      vy: .35 + Math.random() * .8,
+      sway: (Math.random() - .5) * .55,
+      angle: Math.random() * Math.PI * 2,
+      spin: (Math.random() - .5) * .035,
+      emoji: EMOJIS[Math.floor(Math.random() * EMOJIS.length)],
+      alpha: .45 + Math.random() * .45
+    };
+  }
+
+  for (let i = 0; i < 20; i++) leaves.push(newLeaf(true));
+
+  let frame = 0;
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    if (++frame % 80 === 0 && leaves.length < 30) leaves.push(newLeaf(false));
+    leaves.forEach((l, i) => {
+      l.y += l.vy;
+      l.x += Math.sin(l.y * .011) * l.sway;
+      l.angle += l.spin;
+      ctx.save();
+      ctx.globalAlpha = l.alpha;
+      ctx.font = `${l.size}px serif`;
+      ctx.translate(l.x, l.y);
+      ctx.rotate(l.angle);
+      ctx.fillText(l.emoji, -l.size / 2, l.size / 2);
+      ctx.restore();
+      if (l.y > H + 30) leaves[i] = newLeaf(false);
+    });
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+/* ── GALLERY SLIDER ─── */
+let curSlide = 0;
+const TOTAL  = 5;
+const track  = document.getElementById('galleryTrack');
+const dots   = document.querySelectorAll('.dot');
+const IMGS   = [
+  { src:'https://eziarultau.ro/wp-content/uploads/2023/08/muntii-tibles-foto-centrul-de-informare-turistica-tg-lapus.jpg', cap:'munții Tibles' },
+  { src:'https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=1600&q=85', cap:'Camera Deluxe – interior' },
+  { src:'https://retetepentrutoategusturile.ro/wp-content/uploads/2024/06/mamaliga-cu-branza-de-burduf-si-unt-3.jpg', cap:'Mic dejun tradițional' },
+  { src:'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1600&q=85', cap:'Piscina exterioară' },
+  { src:'https://images.unsplash.com/photo-1510798831971-661eb04b3739?w=1600&q=85', cap:'Trasee de drumeție' },
+];
+
+function goToSlide(n) {
+  curSlide = (n + TOTAL) % TOTAL;
+  track.style.transform = `translateX(-${curSlide * 100}%)`;
+  dots.forEach((d, i) => d.classList.toggle('active', i === curSlide));
+}
+function moveSlider(dir) { goToSlide(curSlide + dir); }
+setInterval(() => moveSlider(1), 5500);
+
+/* ── LIGHTBOX ─── */
+function openLightbox(idx) {
+  document.getElementById('lightbox-img').src = IMGS[idx].src;
+  document.getElementById('lightbox-img').alt = IMGS[idx].cap;
+  document.getElementById('lightbox-caption').textContent = IMGS[idx].cap;
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox(e) {
+  if (!e || e.target === document.getElementById('lightbox') || e.currentTarget.id === 'lightbox-close') {
+    document.getElementById('lightbox').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox({}); });
+
+/* ── SEASON TABS ─── */
+function switchTab(e, season) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + season).classList.add('active');
+  e.currentTarget.classList.add('active');
+}
+
+/* ── FAQ ACCORDION ─── */
+function toggleFaq(btn) {
+  const item = btn.parentElement;
+  const open = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+  if (!open) item.classList.add('open');
+}
+
+/* ── COUNTER ANIMATION ─── */
+function runCounter(el, target, suffix, dur) {
+  let v = 0, step = target / (dur / 16);
+  const t = setInterval(() => {
+    v = Math.min(v + step, target);
+    el.textContent = Math.floor(v) + suffix;
+    if (v >= target) clearInterval(t);
+  }, 16);
+}
+const cObs = new IntersectionObserver(entries => {
+  if (entries[0].isIntersecting) {
+    document.querySelectorAll('.stat-num').forEach(el => {
+      runCounter(el, +el.dataset.target, el.dataset.suffix, 1300);
+    });
+    cObs.disconnect();
+  }
+}, { threshold: .5 });
+cObs.observe(document.getElementById('stats'));
+
+/* ── SCROLL REVEAL (cards + testimonials) ─── */
+const revObs = new IntersectionObserver(entries => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      setTimeout(() => e.target.classList.add('visible'), i * 130);
+      revObs.unobserve(e.target);
+    }
+  });
+}, { threshold: .1 });
+document.querySelectorAll('.camera-card, .testi-card').forEach(c => revObs.observe(c));
+
+/* ── FORM SUBMIT ─── */
+function handleSubmit(e) {
+  e.preventDefault();
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3800);
+}
+</script>
+</body>
+</html>
