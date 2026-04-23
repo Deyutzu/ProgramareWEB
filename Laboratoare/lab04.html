@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CineLog — Catalog de Filme</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131c;
+      --border: #2a2a3a;
+      --accent: #e8c547;
+      --accent2: #e05a2b;
+      --text: #e8e8f0;
+      --muted: #7a7a9a;
+      --success: #3ecf8e;
+      --error: #e05a2b;
+      --radius: 6px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 3rem 2rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 60% 0%, rgba(232,197,71,.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3rem, 8vw, 6rem);
+      letter-spacing: .04em;
+      color: var(--accent);
+      line-height: 1;
+    }
+    h2.subtitle {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem;
+      letter-spacing: .2em;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+    }
+    .intro-para {
+      max-width: 640px;
+      margin: 0 auto 1.5rem;
+      font-size: .95rem;
+      color: var(--muted);
+    }
+    .intro-para strong { color: var(--text); }
+    .intro-para em { color: var(--accent); font-style: italic; }
+    .intro-para u { text-decoration-color: var(--accent2); }
+
+    .header-img {
+      border-radius: var(--radius);
+      border: 2px solid var(--border);
+      margin: 1rem auto;
+      display: block;
+    }
+
+    .info-box {
+      height: 80px;
+      background: rgba(232,197,71,.07);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      max-width: 600px;
+      margin: 1rem auto 0;
+      padding: 1rem;
+    }
+    .info-box small { color: var(--muted); font-size: .85rem; }
+
+    /* ── NAV ── */
+    nav {
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      padding: .75rem 2rem;
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: .9rem;
+      letter-spacing: .05em;
+      transition: color .2s;
+    }
+    nav a:hover { color: var(--accent); }
+
+    /* ── MAIN ── */
+    main { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+    section { margin-bottom: 3rem; }
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.8rem;
+      letter-spacing: .1em;
+      color: var(--accent);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: .4rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* ── FORMULAR ── */
+    fieldset {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      background: var(--surface);
+    }
+    legend {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.2rem;
+      letter-spacing: .1em;
+      color: var(--accent);
+      padding: 0 .5rem;
+    }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+    @media(max-width:600px){ .form-grid { grid-template-columns: 1fr; } }
+
+    .form-group { display: flex; flex-direction: column; gap: .3rem; }
+    .form-group.full { grid-column: 1/-1; }
+    label { font-size: .82rem; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
+
+    input[type="text"],
+    input[type="number"],
+    select,
+    textarea {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: var(--radius);
+      padding: .5rem .75rem;
+      font-family: inherit;
+      font-size: .95rem;
+      transition: border-color .2s;
+      width: 100%;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    select[multiple] { height: 110px; }
+
+    .checkbox-group, .radio-group {
+      display: flex; flex-wrap: wrap; gap: .75rem; margin-top: .25rem;
+    }
+    .checkbox-group label, .radio-group label {
+      display: flex; align-items: center; gap: .4rem;
+      font-size: .9rem; text-transform: none; letter-spacing: 0;
+      color: var(--text); cursor: pointer;
+    }
+    input[type="checkbox"], input[type="radio"] {
+      accent-color: var(--accent);
+      width: 15px; height: 15px;
+    }
+
+    .btn-row { display: flex; gap: .75rem; margin-top: 1rem; }
+    input[type="submit"] {
+      background: var(--accent);
+      color: #000;
+      border: none;
+      padding: .6rem 1.8rem;
+      border-radius: var(--radius);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.1rem;
+      letter-spacing: .08em;
+      cursor: pointer;
+      transition: opacity .2s;
+    }
+    input[type="submit"]:hover { opacity: .85; }
+    input[type="reset"] {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: .6rem 1.4rem;
+      border-radius: var(--radius);
+      font-family: inherit;
+      font-size: .95rem;
+      cursor: pointer;
+      transition: border-color .2s, color .2s;
+    }
+    input[type="reset"]:hover { border-color: var(--muted); color: var(--text); }
+
+    #confirmMsg {
+      display: none;
+      background: rgba(62,207,142,.1);
+      border: 1px solid var(--success);
+      color: var(--success);
+      border-radius: var(--radius);
+      padding: .75rem 1rem;
+      margin-top: 1rem;
+      font-size: .9rem;
+    }
+
+    /* ── TABEL ── */
+    .table-wrap { overflow-x: auto; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      font-size: .93rem;
+    }
+    th {
+      background: rgba(232,197,71,.1);
+      color: var(--accent);
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1rem;
+      letter-spacing: .08em;
+      padding: .75rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    td {
+      padding: .65rem 1rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+      color: var(--text);
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255,255,255,.02); }
+    .total-row td {
+      background: rgba(232,197,71,.05);
+      color: var(--accent);
+      font-weight: 700;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1rem;
+      letter-spacing: .05em;
+    }
+    .rating-badge {
+      display: inline-block;
+      background: rgba(232,197,71,.15);
+      color: var(--accent);
+      padding: .1rem .5rem;
+      border-radius: 20px;
+      font-size: .82rem;
+      font-weight: 700;
+    }
+
+    /* ── LISTE ── */
+    .lists-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+    @media(max-width:600px){ .lists-grid { grid-template-columns: 1fr; } }
+
+    .list-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+    }
+    .list-card h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.1rem;
+      color: var(--accent);
+      letter-spacing: .1em;
+      margin-bottom: .75rem;
+    }
+    ol[type="I"], ul {
+      padding-left: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: .4rem;
+    }
+    li { color: var(--muted); font-size: .93rem; }
+    li strong { color: var(--text); }
+
+    .links-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      margin-top: 1.5rem;
+    }
+    .links-card h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.1rem;
+      color: var(--accent);
+      letter-spacing: .1em;
+      margin-bottom: .75rem;
+    }
+    .links-card a {
+      display: inline-block;
+      color: var(--accent2);
+      text-decoration: none;
+      margin-right: 1rem;
+      font-size: .93rem;
+      transition: color .2s;
+    }
+    .links-card a:hover { color: var(--accent); }
+
+    /* ── JS OUTPUT ── */
+    .js-output {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      font-family: 'Courier New', monospace;
+      font-size: .85rem;
+      color: var(--success);
+      white-space: pre-wrap;
+      max-height: 320px;
+      overflow-y: auto;
+      line-height: 1.7;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      color: var(--muted);
+      font-size: .8rem;
+      border-top: 1px solid var(--border);
+    }
+
+    abbr { text-decoration-color: var(--accent); cursor: help; }
+    sup, sub { font-size: .7em; }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════
+     EXERCIȚIUL 1 — STRUCTURĂ HTML
+══════════════════════════════════════════════ -->
+
+<!-- 1a. ANTET -->
+<header>
+  <h1>CineLog</h1>
+  <h2 class="subtitle">Catalogul tău personal de filme</h2>
+
+  <p class="intro-para">
+    Bine ai venit în <strong>CineLog</strong>! Adaugă, gestionează și explorează filmele tale preferate.
+    Fiecare film poate fi <em>evaluat</em> și marcat ca <u>vizionat</u>.
+  </p>
+
+  <img
+    class="header-img"
+    src="https://img.freepik.com/free-vector/online-movies-entertainment-banner_1419-2246.jpg"
+    alt="Banner CineLog aplicație catalog filme"
+    width="400"
+    height="180"
+    title="CineLog — aplicație de gestionare catalog filme"
+  />
+
+  <div style="height:80px;" class="info-box">
+    <small>
+      <abbr title="CineLog versiunea 1.0">CL v1.0</abbr> &mdash;
+      Suportă formate <sup>4K</sup>, Blu-ray și DVD &bull;
+      Compatibil cu toate browserele moderne
+    </small>
+  </div>
+</header>
+
+<nav>
+  <a href="#formular">➕ Adaugă Film</a>
+  <a href="#tabel">🎬 Catalog</a>
+  <a href="#liste">📋 Liste</a>
+  <a href="#js-ex">⚡ JavaScript</a>
+  <a href="https://www.imdb.com" target="_blank" name="link-imdb">IMDb ↗</a>
+  <a href="https://www.rottentomatoes.com" target="_blank" name="link-rt">Rotten Tomatoes ↗</a>
+</nav>
+
+<main>
+
+  <!-- ══════════════════════════════════════════
+       1b. FORMULAR DE ADĂUGARE FILM
+  ══════════════════════════════════════════ -->
+  <section id="formular">
+    <h2 class="section-title">Adaugă Film Nou</h2>
+
+    <form id="filmForm" novalidate>
+      <fieldset>
+        <legend>Detalii Film</legend>
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label for="titlu">Titlu Film</label>
+            <input
+              type="text"
+              id="titlu"
+              name="titlu"
+              maxlength="100"
+              size="30"
+              value=""
+              placeholder="ex: Inception"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="an">Anul Apariției</label>
+            <input
+              type="number"
+              id="an"
+              name="an"
+              min="1900"
+              max="2026"
+              step="1"
+              value="2024"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="gen">Gen Film (selecție multiplă)</label>
+            <select id="gen" name="gen" multiple>
+              <option value="actiune">Acțiune</option>
+              <option value="comedie" selected>Comedie</option>
+              <option value="drama">Dramă</option>
+              <option value="horror">Horror</option>
+              <option value="sf">SF</option>
+              <option value="thriller">Thriller</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Status</label>
+            <div class="checkbox-group">
+              <label><input type="checkbox" name="vizionat" value="vizionat" checked /> Vizionat</label>
+              <label><input type="checkbox" name="favorit" value="favorit" /> Favorit</label>
+              <label><input type="checkbox" name="indisponibil" value="indisponibil" disabled /> Indisponibil</label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Format</label>
+            <div class="radio-group">
+              <label><input type="radio" name="format" value="dvd" /> DVD</label>
+              <label><input type="radio" name="format" value="bluray" checked /> Blu-ray</label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="rating">Rating</label>
+            <input type="number" id="rating" name="rating" min="1" max="10" step="0.1" value="7.5" />
+          </div>
+
+          <div class="form-group full">
+            <label for="descriere">Descriere</label>
+            <textarea
+              id="descriere"
+              name="descriere"
+              readonly
+              cols="60"
+              rows="3"
+            >Aceasta este o descriere pre-completată a filmului. Editarea este dezactivată în acest câmp.</textarea>
+          </div>
+
+          <div class="form-group full">
+            <div class="btn-row">
+              <input type="submit" value="Adaugă Film" />
+              <input type="reset" value="Resetează" />
+            </div>
+            <div id="confirmMsg">✓ Filmul a fost adăugat cu succes în catalog!</div>
+          </div>
+
+        </div>
+      </fieldset>
+    </form>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       1c. TABEL CU FILME
+  ══════════════════════════════════════════ -->
+  <section id="tabel">
+    <h2 class="section-title">Catalog Filme</h2>
+    <div class="table-wrap">
+      <table id="tabelFilme" border="1" width="100%" bgcolor="#13131c" align="center">
+        <tr>
+          <th>Titlu</th>
+          <th>Regizor</th>
+          <th>An</th>
+          <th>Rating</th>
+        </tr>
+        <tr>
+          <td>Inception</td>
+          <td rowspan="2">Christopher Nolan</td>
+          <td>2010</td>
+          <td valign="middle"><span class="rating-badge">8.8</span></td>
+        </tr>
+        <tr>
+          <td>Interstellar</td>
+          <td>2014</td>
+          <td valign="middle"><span class="rating-badge">8.6</span></td>
+        </tr>
+        <tr>
+          <td>The Godfather</td>
+          <td>Francis Ford Coppola</td>
+          <td>1972</td>
+          <td valign="middle"><span class="rating-badge">9.2</span></td>
+        </tr>
+        <tr>
+          <td>Parasite</td>
+          <td>Bong Joon-ho</td>
+          <td>2019</td>
+          <td valign="middle"><span class="rating-badge">8.5</span></td>
+        </tr>
+        <tr class="total-row">
+          <td colspan="4" align="center">TOTAL FILME: <span id="totalFilme">4</span></td>
+        </tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       1d. LISTE ȘI NAVIGAȚIE
+  ══════════════════════════════════════════ -->
+  <section id="liste">
+    <h2 class="section-title">Liste și Resurse</h2>
+    <div class="lists-grid">
+
+      <div class="list-card">
+        <h3>Pași Adăugare Film</h3>
+        <ol start="1" type="I">
+          <li><strong>Completează</strong> titlul filmului</li>
+          <li><strong>Selectează</strong> anul apariției</li>
+          <li><strong>Alege</strong> genul (unul sau mai multe)</li>
+          <li><strong>Bifează</strong> statusul (vizionat / favorit)</li>
+          <li><strong>Apasă</strong> butonul „Adaugă Film"</li>
+        </ol>
+      </div>
+
+      <div class="list-card">
+        <h3>Genuri Disponibile</h3>
+        <ul>
+          <li>🎬 <strong>Acțiune</strong></li>
+          <li>😄 <strong>Comedie</strong></li>
+          <li>🎭 <strong>Dramă</strong></li>
+          <li>👻 <strong>Horror</strong></li>
+          <li>🚀 <strong>SF</strong></li>
+          <li>🔪 <strong>Thriller</strong></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="links-card">
+      <h3>Linkuri Utile</h3>
+      <a href="https://www.imdb.com" target="_blank">🔗 IMDb — Internet Movie Database</a>
+      <a href="https://www.rottentomatoes.com" target="_blank">🍅 Rotten Tomatoes</a>
+      <a href="#formular">⬆ Mergi la Formular (ancoră)</a>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════
+       EXERCIȚIUL 2 + 3 — JS OUTPUT
+  ══════════════════════════════════════════ -->
+  <section id="js-ex">
+    <h2 class="section-title">Output JavaScript (Ex. 2 &amp; 3)</h2>
+    <div class="js-output" id="jsOutput"></div>
+  </section>
+
+</main>
+
+<footer>
+  &copy; 2024 CineLog &mdash; Aplicație educațională &bull;
+  <abbr title="Hypertext Markup Language">HTML</abbr> +
+  <abbr title="Cascading Style Sheets">CSS</abbr> +
+  <abbr title="JavaScript">JS</abbr>
+</footer>
+
+<!-- ══════════════════════════════════════════════
+     EXERCIȚIUL 2 — VARIABILE ȘI FUNCȚII JS
+══════════════════════════════════════════════ -->
+<script>
+// ── 2a. Declarații variabile ──
+var numeCinema = "CineLog Multiplex";
+let nrFilme = 4;
+const pretBilet = 35.5;
+
+// alert() — commented out to avoid blocking UI
+// alert("Cinema: " + numeCinema + " | Filme: " + nrFilme + " | Preț bilet: " + pretBilet + " RON");
+console.log("numeCinema:", numeCinema);
+console.log("nrFilme:", nrFilme);
+console.log("pretBilet:", pretBilet);
+
+// ── 2b. Funcții ──
+
+// 1. Function declaration
+function calculeazaCostBilete(pretBilet, nrPersoane) {
+  if (nrPersoane > 5) {
+    return pretBilet * nrPersoane * 0.8;
+  }
+  return pretBilet * nrPersoane;
+}
+
+// 2. Function expression
+var calculeazaRatingMediu = function(rating1, rating2, rating3) {
+  var suma = rating1 + rating2 + rating3;
+  return (suma / 3).toFixed(1);
+};
+
+// 3. Arrow function
+const formateazaInfo = (titlu, an, rating) => {
+  return titlu + " (" + an + ") - Rating: " + rating + "/10";
+};
+
+// ── 2c. Apeluri funcții ──
+let costGrup = calculeazaCostBilete(35.5, 7);
+console.log("Cost grup (7 pers): " + costGrup);
+let costNormal = calculeazaCostBilete(35.5, 3);
+console.log("Cost normal (3 pers): " + costNormal);
+let ratingMediu = calculeazaRatingMediu(8.5, 7.2, 9.0);
+let info = formateazaInfo("Inception", 2010, ratingMediu);
+
+// ══════════════════════════════════════════════
+// EXERCIȚIUL 3 — ARRAY-URI ȘI OBIECTE
+// ══════════════════════════════════════════════
+
+// ── 3a. Array de obiecte ──
+let filme = [
+  { titlu: "Inception",     regizor: "Christopher Nolan",    an: 2010, rating: 8.8, gen: "SF",      vizionat: true  },
+  { titlu: "Interstellar",  regizor: "Christopher Nolan",    an: 2014, rating: 8.6, gen: "SF",      vizionat: false },
+  { titlu: "The Godfather", regizor: "Francis Ford Coppola", an: 1972, rating: 9.2, gen: "Drama",   vizionat: true  },
+  { titlu: "Parasite",      regizor: "Bong Joon-ho",         an: 2019, rating: 8.5, gen: "Thriller",vizionat: true  },
+  { titlu: "Joker",         regizor: "Todd Phillips",         an: 2019, rating: 8.4, gen: "Drama",   vizionat: false },
+  { titlu: "Dune",          regizor: "Denis Villeneuve",      an: 2021, rating: 8.0, gen: "SF",      vizionat: false },
+];
+
+let jsLog = "";
+
+// forEach — rating > 8.0
+jsLog += "── forEach (rating > 8.0) ──\n";
+filme.forEach(f => {
+  if (f.rating > 8.0) {
+    jsLog += `  ★ ${f.titlu} (${f.rating})\n`;
+    console.log("Rating > 8:", f.titlu, f.rating);
+  }
+});
+
+// map
+jsLog += "\n── map (stringuri info) ──\n";
+let filmeStrings = filme.map(f => `${f.titlu} (${f.an}) - ${f.rating}/10`);
+filmeStrings.forEach(s => { jsLog += "  " + s + "\n"; });
+
+// filter — nevizionate
+jsLog += "\n── filter (nevizionate) ──\n";
+let nevizionate = filme.filter(f => f.vizionat === false);
+nevizionate.forEach(f => { jsLog += `  ⏳ ${f.titlu}\n`; });
+
+// reduce — suma și media rating
+jsLog += "\n── reduce (media rating-uri) ──\n";
+let sumaRating = filme.reduce((acc, f) => acc + f.rating, 0);
+let mediaRating = (sumaRating / filme.length).toFixed(2);
+jsLog += `  Sumă rating-uri: ${sumaRating.toFixed(1)}\n`;
+jsLog += `  Media rating-uri: ${mediaRating}\n`;
+
+// ── 3b. Obiect complex cinema ──
+var cinema = {
+  nume: numeCinema,
+  oras: "Cluj-Napoca",
+  filme: filme,
+
+  afiseazaCatalog: function() {
+    let out = "";
+    this.filme.forEach(f => {
+      out += `  [${f.gen}] ${f.titlu} (${f.an}) de ${f.regizor} — ${f.rating}/10 ${f.vizionat ? "✓" : "⏳"}\n`;
+    });
+    return out;
+  },
+
+  calculeazaRatingMediu: function() {
+    let suma = this.filme.reduce((acc, f) => acc + f.rating, 0);
+    return (suma / this.filme.length).toFixed(2);
+  },
+
+  cautaFilm: function(titluFilm) {
+    return this.filme.find(f => f.titlu.toLowerCase() === titluFilm.toLowerCase()) || null;
+  },
+
+  filtreazaDupaGen: function(gen) {
+    return this.filme.filter(f => f.gen.toLowerCase() === gen.toLowerCase());
+  }
+};
+
+jsLog += "\n── Obiect cinema.afiseazaCatalog() ──\n";
+jsLog += cinema.afiseazaCatalog();
+
+jsLog += `\n── cinema.calculeazaRatingMediu() ──\n`;
+jsLog += `  Media: ${cinema.calculeazaRatingMediu()}\n`;
+
+jsLog += "\n── cinema.cautaFilm() ──\n";
+let gasit = cinema.cautaFilm("Dune");
+jsLog += gasit ? `  Găsit: ${gasit.titlu} (${gasit.an})\n` : "  Film negăsit.\n";
+let negasit = cinema.cautaFilm("Avatar 3");
+jsLog += negasit ? `  Găsit: ${negasit.titlu}\n` : `  „Avatar 3" — Film negăsit.\n`;
+
+jsLog += "\n── cinema.filtreazaDupaGen('SF') ──\n";
+cinema.filtreazaDupaGen("SF").forEach(f => { jsLog += `  ${f.titlu}\n`; });
+
+jsLog += "\n── Ex. 2c ──\n";
+jsLog += `  Cost grup (7 pers): ${costGrup} RON\n`;
+jsLog += `  Cost normal (3 pers): ${costNormal} RON\n`;
+jsLog += `  ${info}\n`;
+
+// Afișare în pagină
+document.getElementById("jsOutput").textContent = jsLog;
+
+// document.write din cerință (ex. 2c) — evităm suprascrierea paginii, afișăm în secțiune
+// document.write("<p>" + info + "</p>"); // detaliu cerință original
+
+// ══════════════════════════════════════════════
+// EXERCIȚIUL 4 — INTERACȚIUNE FORMULAR + DOM
+// ══════════════════════════════════════════════
+
+// ── 4a. Capturare eveniment și validare ──
+var form = document.getElementById("filmForm");
+
+form.addEventListener("submit", function(event) {
+  event.preventDefault();
+
+  // Citire valori
+  var titluFilm = document.getElementById("titlu").value.trim();
+  var anFilm    = parseInt(document.getElementById("an").value);
+  var ratingFilm = parseFloat(document.getElementById("rating").value) || 7.0;
+
+  var genSelect = document.getElementById("gen");
+  var genuriSelectate = Array.from(genSelect.selectedOptions).map(o => o.text);
+
+  // ── Validări ──
+  if (!titluFilm) {
+    alert("❌ Eroare: Titlul filmului nu poate fi gol!");
+    return;
+  }
+  if (anFilm < 1900 || anFilm > 2026 || isNaN(anFilm)) {
+    alert("❌ Eroare: Anul trebuie să fie între 1900 și 2026!");
+    return;
+  }
+  if (genuriSelectate.length === 0) {
+    alert("❌ Eroare: Selectează cel puțin un gen!");
+    return;
+  }
+
+  // ── 4b. Adăugare dinamică în DOM ──
+  var filmNou = {
+    titlu: titluFilm,
+    an: anFilm,
+    rating: ratingFilm,
+    gen: genuriSelectate.join(", "),
+    regizor: "—",
+    vizionat: document.querySelector('input[name="vizionat"]').checked
+  };
+
+  // Adaugă în array
+  cinema.filme.push(filmNou);
+  filme.push(filmNou);
+
+  // Creează rând nou în tabel (înainte de rândul total)
+  var totalRow = document.querySelector(".total-row");
+  var tbody = totalRow.parentNode;
+
+  var tr = document.createElement("tr");
+
+  var td1 = document.createElement("td");
+  td1.innerText = titluFilm;
+  tr.appendChild(td1);
+
+  var td2 = document.createElement("td");
+  td2.innerText = "—";
+  tr.appendChild(td2);
+
+  var td3 = document.createElement("td");
+  td3.innerText = anFilm;
+  tr.appendChild(td3);
+
+  var td4 = document.createElement("td");
+  td4.innerHTML = '<span class="rating-badge">' + ratingFilm.toFixed(1) + '</span>';
+  tr.appendChild(td4);
+
+  tbody.insertBefore(tr, totalRow);
+
+  // Actualizează totalul
+  var totalSpan = document.getElementById("totalFilme");
+  totalSpan.textContent = parseInt(totalSpan.textContent) + 1;
+
+  // Mesaj confirmare
+  var msg = document.getElementById("confirmMsg");
+  msg.style.display = "block";
+  msg.textContent = `✓ „${titluFilm}" a fost adăugat cu succes în catalog! (Total: ${totalSpan.textContent} filme)`;
+
+  // Resetare formular
+  form.reset();
+
+  // Ascunde mesajul după 4s
+  setTimeout(() => { msg.style.display = "none"; }, 4000);
+});
+</script>
+</body>
+</html>
