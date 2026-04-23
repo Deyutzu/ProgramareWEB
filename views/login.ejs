@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ro" data-tema="<%= typeof tema !== 'undefined' ? tema : 'light' %>">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Autentificare — Vila Bradu</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<nav class="nav">
+  <a href="/" class="nav-brand">Vila <span>Bradu</span></a>
+  <ul class="nav-links">
+    <li><a href="/">Acasă</a></li>
+    <li><a href="/register" class="btn-nav">Înregistrare</a></li>
+  </ul>
+</nav>
+
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="brand">Vila <span>Bradu</span></div>
+    <div class="subtitle">Autentificare personal</div>
+
+    <% if (error) { %>
+      <div class="alert alert-error"><%= error %></div>
+    <% } %>
+
+    <form action="/login" method="POST">
+      <div class="form-group">
+        <label for="username">Utilizator</label>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          value="<%= formData.username || '' %>"
+          placeholder="username"
+          autocomplete="username"
+          required
+        >
+      </div>
+      <div class="form-group">
+        <label for="password">Parolă</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="••••••••"
+          autocomplete="current-password"
+          required
+        >
+      </div>
+      <button type="submit" class="btn btn-primary btn-full">Autentificare →</button>
+    </form>
+
+    <div class="auth-footer">
+      Nu ai cont?
+      <a href="/register">Înregistrează-te</a>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

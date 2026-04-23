@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ro" data-tema="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Înregistrare — Vila Bradu</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<nav class="nav">
+  <a href="/" class="nav-brand">Vila <span>Bradu</span></a>
+  <ul class="nav-links">
+    <li><a href="/">Acasă</a></li>
+    <li><a href="/login" class="btn-nav">Autentificare</a></li>
+  </ul>
+</nav>
+
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="brand">Vila <span>Bradu</span></div>
+    <div class="subtitle">Creare cont personal</div>
+
+    <% if (error) { %>
+      <div class="alert alert-error"><%= error %></div>
+    <% } %>
+
+    <form action="/register" method="POST">
+      <div class="form-group">
+        <label for="nume">Numele complet</label>
+        <input
+          type="text"
+          id="nume"
+          name="nume"
+          value="<%= formData.nume || '' %>"
+          placeholder="ex. Ion Popescu"
+          required
+        >
+      </div>
+      <div class="form-group">
+        <label for="username">Utilizator</label>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          value="<%= formData.username || '' %>"
+          placeholder="username unic"
+          autocomplete="username"
+          required
+        >
+      </div>
+      <div class="form-group">
+        <label for="password">Parolă (min. 4 caractere)</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="••••••••"
+          autocomplete="new-password"
+          required
+          minlength="4"
+        >
+      </div>
+      <button type="submit" class="btn btn-primary btn-full">Creare cont →</button>
+    </form>
+
+    <div class="auth-footer">
+      Ai deja cont?
+      <a href="/login">Autentifică-te</a>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

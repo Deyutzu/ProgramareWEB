@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ro" data-tema="<%= tema %>">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 — Vila Bradu</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<nav class="nav">
+  <a href="/" class="nav-brand">Vila <span>Bradu</span></a>
+  <ul class="nav-links">
+    <li><a href="/">Acasă</a></li>
+    <% if (user) { %>
+      <li><a href="/pensiune">Dashboard</a></li>
+    <% } %>
+  </ul>
+</nav>
+
+<div style="text-align:center;padding:8rem 2rem;">
+  <div style="font-family:var(--font-display);font-size:6rem;color:var(--border);line-height:1">404</div>
+  <h2 style="font-family:var(--font-display);font-size:1.75rem;font-weight:400;color:var(--dark);margin:1rem 0 0.5rem">Pagina nu există</h2>
+  <p style="color:var(--text-light);margin-bottom:2rem">Resursa solicitată nu a putut fi găsită.</p>
+  <a href="<%= user ? '/pensiune' : '/' %>" class="btn btn-primary">← Înapoi</a>
+</div>
+
+</body>
+</html>

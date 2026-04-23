@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ro" data-tema="<%= tema %>">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Camere — Vila Bradu</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<nav class="nav">
+  <a href="/" class="nav-brand">Vila <span>Bradu</span></a>
+  <ul class="nav-links">
+    <li><a href="/pensiune">Dashboard</a></li>
+    <li><a href="/pensiune/camere">Camere</a></li>
+    <li><a href="/logout">Deconectare</a></li>
+    <li class="tema-toggle">
+      <form action="/pensiune/tema" method="POST">
+        <input type="hidden" name="tema" value="<%= tema === 'dark' ? 'light' : 'dark' %>">
+        <button type="submit" class="tema-btn">
+          <%= tema === 'dark' ? '☀ Luminos' : '☾ Întunecat' %>
+        </button>
+      </form>
+    </li>
+  </ul>
+</nav>
+
+<div class="session-bar">
+  <div>
+    <span class="dot"></span>
+    Autentificat ca <strong><%= user.nume %></strong>
+  </div>
+  <div>
+    <% if (tema === 'dark') { %>
+      🌙 Temă întunecată
+    <% } else { %>
+      ☀ Temă luminoasă
+    <% } %>
+  </div>
+</div>
+
+<div class="page">
+  <div class="sidebar-layout">
+
+    <aside class="sidebar">
+      <div class="sidebar-label">Navigare</div>
+      <nav>
+        <a href="/pensiune">📋 Dashboard</a>
+        <a href="/pensiune/camere" class="active">🏠 Camere</a>
+      </nav>
+      <div class="sidebar-label">Cont</div>
+      <nav>
+        <a href="/logout">← Deconectare</a>
+      </nav>
+    </aside>
+
+    <main>
+      <span class="section-subtitle">Gestiune camere</span>
+      <h1 class="section-title">Camere pensiune</h1>
+      <hr class="divider">
+
+      <!-- Sumar rapid -->
+      <div class="stats-grid" style="margin-bottom:2rem">
+        <div class="stat-card">
+          <div class="stat-icon">🏠</div>
+          <div class="stat-value"><%= camere.length %></div>
+          <div class="stat-label">Total camere</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">✅</div>
+          <div class="stat-value"><%= camere.filter(c => c.status === 'libera').length %></div>
+          <div class="stat-label">Disponibile</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🔴</div>
+          <div class="stat-value"><%= camere.filter(c => c.status === 'ocupata').length %></div>
+          <div class="stat-label">Ocupate</div>
+        </div>
+      </div>
+
+      <!-- Grid camere -->
+      <div class="camere-grid">
+        <% camere.forEach(function(camera) { %>
+          <div class="camera-card">
+            <div class="camera-card-top">
+              <div class="camera-numar"><%= camera.numar %></div>
+              <span class="badge badge-<%= camera.status %>">
+                <%= camera.status === 'libera' ? 'Liberă' : 'Ocupată' %>
+              </span>
+            </div>
+            <div class="camera-card-body">
+              <div class="camera-tip"><%= camera.tip %> · Etaj <%= camera.etaj %></div>
+              <div class="camera-facilitati">
+                <% camera.facilitati.forEach(function(f) { %>
+                  <span class="facilitate"><%= f %></span>
+                <% }); %>
+              </div>
+              <div class="camera-pret">
+                <%= camera.pretNoapte %> RON
+                <span>/ noapte</span>
+              </div>
+            </div>
+          </div>
+        <% }); %>
+      </div>
+
+      <hr class="divider">
+      <a href="/pensiune" class="btn btn-secondary">← Înapoi la dashboard</a>
+    </main>
+
+  </div>
+</div>
+
+</body>
+</html>

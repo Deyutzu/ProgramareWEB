@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ro" data-tema="<%= tema %>">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pensiunea Vila Bradu</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<nav class="nav">
+  <a href="/" class="nav-brand">Vila <span>Bradu</span></a>
+  <ul class="nav-links">
+    <% if (user) { %>
+      <li><a href="/pensiune">Dashboard</a></li>
+      <li><a href="/pensiune/camere">Camere</a></li>
+      <li><a href="/logout">Deconectare</a></li>
+    <% } else { %>
+      <li><a href="/login">Autentificare</a></li>
+      <li><a href="/register" class="btn-nav">Înregistrare</a></li>
+    <% } %>
+    <li class="tema-toggle">
+      <form action="/pensiune/tema" method="POST">
+        <input type="hidden" name="tema" value="<%= tema === 'dark' ? 'light' : 'dark' %>">
+        <button type="submit" class="tema-btn">
+          <%= tema === 'dark' ? '☀ Luminos' : '☾ Întunecat' %>
+        </button>
+      </form>
+    </li>
+  </ul>
+</nav>
+
+<section class="hero">
+  <span class="hero-label">Pensiunea Vila Bradu — Sistem de Gestiune</span>
+  <h1>Gestionează <em>elegant</em><br>pensiunea ta</h1>
+  <p>Rezervări, camere și oaspeți — totul la un loc, simplu și eficient.</p>
+  <div class="btn-group">
+    <% if (user) { %>
+      <a href="/pensiune" class="btn btn-primary">Dashboard →</a>
+    <% } else { %>
+      <a href="/login" class="btn btn-primary">Autentificare →</a>
+      <a href="/register" class="btn btn-outline">Creare cont</a>
+    <% } %>
+  </div>
+</section>
+
+<section class="features">
+  <div class="feature">
+    <div class="icon">📋</div>
+    <h3>Rezervări</h3>
+    <p>Vizualizează și gestionează toate rezervările active, confirmate și finalizate.</p>
+  </div>
+  <div class="feature">
+    <div class="icon">🏠</div>
+    <h3>Camere</h3>
+    <p>Monitorizează statusul fiecărei camere și facilitățile disponibile în timp real.</p>
+  </div>
+  <div class="feature">
+    <div class="icon">📊</div>
+    <h3>Statistici</h3>
+    <p>Urmărește veniturile și rata de ocupare a pensiunii dintr-o privire.</p>
+  </div>
+</section>
+
+<% if (tema === 'dark') { %>
+  <!-- Cookie tema dark activ — utilizatorul preferă modul întunecat -->
+  <div style="position:fixed;bottom:1rem;right:1rem;background:#2d2d2a;border:1px solid #3a3830;color:#8a8578;padding:0.4rem 0.8rem;border-radius:2px;font-size:0.7rem;letter-spacing:0.08em;">
+    ☾ Mod întunecat activ
+  </div>
+<% } %>
+
+</body>
+</html>

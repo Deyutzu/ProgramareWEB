@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ro" data-tema="<%= tema %>">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rezervare #<%= rezervare.id %> — Vila Bradu</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<nav class="nav">
+  <a href="/" class="nav-brand">Vila <span>Bradu</span></a>
+  <ul class="nav-links">
+    <li><a href="/pensiune">Dashboard</a></li>
+    <li><a href="/pensiune/camere">Camere</a></li>
+    <li><a href="/logout">Deconectare</a></li>
+    <li class="tema-toggle">
+      <form action="/pensiune/tema" method="POST">
+        <input type="hidden" name="tema" value="<%= tema === 'dark' ? 'light' : 'dark' %>">
+        <button type="submit" class="tema-btn">
+          <%= tema === 'dark' ? '☀ Luminos' : '☾ Întunecat' %>
+        </button>
+      </form>
+    </li>
+  </ul>
+</nav>
+
+<div class="session-bar">
+  <div>
+    <span class="dot"></span>
+    Autentificat ca <strong><%= user.nume %></strong>
+  </div>
+  <div>
+    <% if (tema === 'dark') { %>
+      🌙 Temă întunecată
+    <% } else { %>
+      ☀ Temă luminoasă
+    <% } %>
+  </div>
+</div>
+
+<div class="page">
+  <div class="sidebar-layout">
+
+    <aside class="sidebar">
+      <div class="sidebar-label">Navigare</div>
+      <nav>
+        <a href="/pensiune">📋 Dashboard</a>
+        <a href="/pensiune/camere">🏠 Camere</a>
+      </nav>
+      <div class="sidebar-label">Cont</div>
+      <nav>
+        <a href="/logout">← Deconectare</a>
+      </nav>
+    </aside>
+
+    <main>
+      <span class="section-subtitle">Detalii rezervare</span>
+      <h1 class="section-title">Rezervare #<%= rezervare.id %></h1>
+      <hr class="divider">
+
+      <div class="detail-card">
+        <div class="detail-card-header">
+          <h2><%= rezervare.numeOaspete %></h2>
+          <p>
+            Camera <%= rezervare.camera %> · <%= rezervare.tipCamera %>
+            &nbsp;·&nbsp;
+            <span class="badge badge-<%= rezervare.status %>">
+              <%= rezervare.status === 'in_asteptare' ? 'În așteptare' : rezervare.status.charAt(0).toUpperCase() + rezervare.status.slice(1) %>
+            </span>
+          </p>
+        </div>
+
+        <div class="detail-body">
+          <div class="detail-grid">
+            <div class="detail-field">
+              <label>Oaspete</label>
+              <div class="value"><%= rezervare.numeOaspete %></div>
+            </div>
+            <div class="detail-field">
+              <label>Telefon</label>
+              <div class="value"><%= rezervare.telefon %></div>
+            </div>
+            <div class="detail-field">
+              <label>Check-in</label>
+              <div class="value"><%= rezervare.checkIn %></div>
+            </div>
+            <div class="detail-field">
+              <label>Check-out</label>
+              <div class="value"><%= rezervare.checkOut %></div>
+            </div>
+            <div class="detail-field">
+              <label>Număr nopți</label>
+              <div class="value"><%= rezervare.nrNopti %> nopți</div>
+            </div>
+            <div class="detail-field">
+              <label>Preț / noapte</label>
+              <div class="value"><%= rezervare.pretNoapte %> RON</div>
+            </div>
+            <% if (rezervare.observatii) { %>
+              <div class="detail-field" style="grid-column: 1/-1">
+                <label>Observații</label>
+                <div class="value"><%= rezervare.observatii %></div>
+              </div>
+            <% } %>
+          </div>
+
+          <div class="detail-total">
+            <div class="label">Total de plată</div>
+            <div class="total-value"><%= totalPret.toLocaleString('ro-RO') %> RON</div>
+          </div>
+
+          <hr class="divider">
+          <div style="display:flex;gap:1rem;flex-wrap:wrap">
+            <a href="/pensiune" class="btn btn-secondary">← Înapoi la dashboard</a>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+</body>
+</html>

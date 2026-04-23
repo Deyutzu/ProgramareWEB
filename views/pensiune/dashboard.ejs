@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ro" data-tema="<%= tema %>">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — Vila Bradu</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<nav class="nav">
+  <a href="/" class="nav-brand">Vila <span>Bradu</span></a>
+  <ul class="nav-links">
+    <li><a href="/pensiune">Dashboard</a></li>
+    <li><a href="/pensiune/camere">Camere</a></li>
+    <li><a href="/logout">Deconectare</a></li>
+    <li class="tema-toggle">
+      <form action="/pensiune/tema" method="POST">
+        <input type="hidden" name="tema" value="<%= tema === 'dark' ? 'light' : 'dark' %>">
+        <button type="submit" class="tema-btn">
+          <%= tema === 'dark' ? '☀ Luminos' : '☾ Întunecat' %>
+        </button>
+      </form>
+    </li>
+  </ul>
+</nav>
+
+<!-- Session bar -->
+<div class="session-bar">
+  <div>
+    <span class="dot"></span>
+    Bun venit, <strong><%= user.nume %></strong> — sesiune activă ca <em><%= user.username %></em>
+  </div>
+  <div>
+    Vizite în această sesiune: <strong><%= views %></strong>
+    &nbsp;·&nbsp;
+    <% if (tema === 'dark') { %>
+      🌙 Temă întunecată activă
+    <% } else { %>
+      ☀ Temă luminoasă activă
+    <% } %>
+  </div>
+</div>
+
+<div class="page">
+  <div class="sidebar-layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-label">Navigare</div>
+      <nav>
+        <a href="/pensiune" class="active">📋 Dashboard</a>
+        <a href="/pensiune/camere">🏠 Camere</a>
+      </nav>
+      <div class="sidebar-label">Cont</div>
+      <nav>
+        <a href="/logout">← Deconectare</a>
+      </nav>
+    </aside>
+
+    <!-- Main content -->
+    <main>
+      <span class="section-subtitle">Pensiunea Vila Bradu</span>
+      <h1 class="section-title">Bun venit, <%= user.nume.split(' ')[0] %>!</h1>
+      <hr class="divider">
+
+      <!-- Statistici -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">📋</div>
+          <div class="stat-value"><%= stats.total %></div>
+          <div class="stat-label">Total rezervări</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">✅</div>
+          <div class="stat-value"><%= stats.confirmate %></div>
+          <div class="stat-label">Confirmate</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">⏳</div>
+          <div class="stat-value"><%= stats.inAsteptare %></div>
+          <div class="stat-label">În așteptare</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">💰</div>
+          <div class="stat-value"><%= stats.venit.toLocaleString('ro-RO') %></div>
+          <div class="stat-label">Venit estimat (RON)</div>
+        </div>
+      </div>
+
+      <!-- Lista rezervari -->
+      <div class="table-wrap">
+        <div class="table-header">
+          <h2>Rezervări recente</h2>
+          <span style="font-size:0.78rem;color:var(--text-light)">
+            <%= rezervari.length %> înregistrări
+          </span>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Oaspete</th>
+              <th>Camera</th>
+              <th>Tip</th>
+              <th>Check-in</th>
+              <th>Check-out</th>
+              <th>Nopți</th>
+              <th>Status</th>
+              <th>Detalii</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% rezervari.forEach(function(r) { %>
+              <tr>
+                <td><strong><%= r.numeOaspete %></strong></td>
+                <td><%= r.camera %></td>
+                <td><%= r.tipCamera %></td>
+                <td><%= r.checkIn %></td>
+                <td><%= r.checkOut %></td>
+                <td><%= r.nrNopti %></td>
+                <td>
+                  <span class="badge badge-<%= r.status %>">
+                    <%= r.status === 'in_asteptare' ? 'În așteptare' : r.status.charAt(0).toUpperCase() + r.status.slice(1) %>
+                  </span>
+                </td>
+                <td>
+                  <a href="/pensiune/rezervari/<%= r.id %>">Vezi →</a>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+</body>
+</html>
