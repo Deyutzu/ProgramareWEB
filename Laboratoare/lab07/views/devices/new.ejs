@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head><title>Adaugă Dispozitiv</title></head>
+<body style="font-family: Arial, sans-serif; margin: 40px;">
+
+    <h1>Adaugă Dispozitiv Nou</h1>
+
+    <% if (error) { %>
+        <div style="color: red; border: 1px solid red; padding: 10px; margin-bottom: 15px; width: 300px;">
+            **Eroare:** <%= error %>
+        </div>
+    <% } %>
+
+    <form action="/devices" method="POST">
+        <label>Nume Dispozitiv:</label><br>
+        <input type="text" name="name" required><br><br>
+
+        <label>Preț (RON):</label><br>
+        <input type="number" name="price" required><br><br>
+
+        <label>Categorie:</label><br>
+        <select name="category">
+            <option value="Senzor">Senzor</option>
+            <option value="Actuator">Actuator</option>
+            <option value="Controler">Controler</option>
+            <option value="Retea">Rețea</option>
+        </select><br><br>
+
+        <label>Status Conexiune:</label><br>
+        <select name="isOnline">
+            <option value="true">Online</option>
+            <option value="false" selected>Offline</option>
+        </select><br><br>
+
+        <button type="submit" style="background: green; color: white; padding: 8px 15px; border: none; cursor: pointer;">Salvează în DB</button>
+    </form>
+    
+    <br>
+    <a href="/devices">Anulează</a>
+
+</body>
+</html>

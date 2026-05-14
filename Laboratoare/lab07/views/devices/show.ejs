@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= device.name %></title>
+    <style>
+        .status-online { color: green; }
+        .status-offline { color: red; }
+    </style>
+</head>
+<body style="font-family: Arial, sans-serif; margin: 40px;">
+
+    <h1>Detalii: <%= device.name %></h1>
+    
+    <div style="background-color: #f9f9f9; padding: 20px; border-radius: 5px; width: 300px;">
+        <p>**Preț:** <%= device.price %> RON</p>
+        <p>**Categorie:** <%= device.category %></p>
+        <p>**Status:** <span class="<%= device.isOnline ? 'status-online' : 'status-offline' %>"><%= device.isOnline ? 'Online' : 'Offline' %></span></p>
+        <p>**Data instalării:** <%= new Date(device.installationDate).toLocaleDateString() %></p>
+        <hr>
+        <p><small>Înregistrat de: <%= device.createdBy ? device.createdBy.username : 'Necunoscut' %> 
+        (<%= device.createdBy ? device.createdBy.email : '' %>)</small></p>
+    </div>
+
+    <br>
+
+    <% if (currentUser) { %>
+        <div style="display: flex; gap: 10px;">
+            <a href="/devices/<%= device._id %>/edit" style="padding: 5px 10px; background: blue; color: white; text-decoration: none;">Editează</a>
+            
+            <form action="/devices/<%= device._id %>/delete" method="POST" onsubmit="return confirm('Sigur vrei să ștergi acest element?');">
+                <button type="submit" style="padding: 5px 10px; background: red; color: white; border: none; cursor: pointer;">Șterge</button>
+            </form>
+        </div>
+    <% } %>
+
+    <br>
+    <a href="/devices">⬅ Înapoi la listă</a>
+
+</body>
+</html>

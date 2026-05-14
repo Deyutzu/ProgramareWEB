@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head><title>Dispozitive</title></head>
+<body style="font-family: Arial, sans-serif; margin: 40px;">
+
+    <div style="border-bottom: 1px solid #ccc; padding-bottom: 10px; margin-bottom: 20px;">
+        <% if (currentUser) { %>
+            Salut, **<%= currentUser.username %>**! | 
+            <a href="/logout">Logout</a>
+        <% } else { %>
+            <a href="/login">Login</a> | <a href="/register">Register</a>
+        <% } %>
+    </div>
+
+    <h1>Lista Dispozitive IoT</h1>
+
+    <form action="/devices" method="GET" style="margin-bottom: 20px;">
+        <input type="text" name="search" placeholder="Caută după nume..." value="<%= searchQuery %>">
+        <select name="sort">
+            <option value="">Sortează implicit</option>
+            <option value="price">Preț crescător</option>
+            <option value="-price">Preț descrescător</option>
+        </select>
+        <button type="submit">Aplică filtru</button>
+        <% if (searchQuery) { %>
+            <a href="/devices">Resetează</a>
+        <% } %>
+    </form>
+
+    <% if (currentUser) { %>
+        <p><a href="/devices/new" style="background-color: green; color: white; padding: 5px 10px; text-decoration: none;">+ Adaugă Dispozitiv</a></p>
+    <% } else { %>
+        <p><small>*Trebuie să fii logat pentru a adăuga dispozitive noi.</small></p>
+    <% } %>
+
+    <hr>
+
+    <ul>
+        <% devices.forEach(device => { %>
+            <li style="margin-bottom: 15px;">
+                <a href="/devices/<%= device._id %>" style="font-size: 18px; font-weight: bold;"><%= device.name %></a> 
+                - **<%= device.price %> RON**
+                <br>
+                <small>Categorie: <%= device.category %> | Adăugat de: **<%= device.createdBy ? device.createdBy.username : 'Admin' %>**</small>
+            </li>
+        <% }) %>
+    </ul>
+
+</body>
+</html>
