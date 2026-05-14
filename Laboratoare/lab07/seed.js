@@ -6,7 +6,7 @@ require('dotenv').config();
 const seedDB = async () => {
     try {
         // Am pus link-ul direct in functia connect, cu ghilimele
-        await mongoose.connect("mongodb+srv://laborator_pw:unjTOlXweVLExEYa@cluster0.fkmghly.mongodb.net/lab07?appName=Cluster0");
+        await mongoose.connect("mongodb+srv://x:y@cluster0.fkmghly.mongodb.net/lab07?appName=Cluster0");
         
         console.log('Seed: Conectat la MongoDB...');
 
