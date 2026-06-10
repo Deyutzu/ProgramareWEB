@@ -1,0 +1,25 @@
+[
+  {
+    "id": "1781087879670",
+    "username": "sofroncoman",
+    "passwordHash": "$2b$10$A/8eAaLf4x/MYEBF7OPWseSyBghTiEojBNh1EfWXkmp9flb5yh9va",
+    "nume": "Sofron Coman",
+    "createdAt": "2026-06-10T10:37:59.670Z"
+  },
+  {
+    "id": "1781088636000",
+    "username": "deyu",
+    "passwordHash": "$2b$10$XkhhMDwfr4aEHdWn8MHFyu468v2dBGgxc1E6bXKHaSgC0XHbseLWq",
+    "nume": "deyu",
+    "role": "admin",
+    "createdAt": "2026-06-10T10:50:36.000Z"
+  },
+  {
+    "id": "admin-id",
+    "username": "admin",
+    "passwordHash": "$2b$10$yChVR0rknEKC.L2Iip/4qeun1zqvRj.iiDJiXsK.2pHRkwmBp5Vz6",
+    "nume": "Administrator Pensiune",
+    "role": "admin",
+    "createdAt": "2026-06-10T11:00:53.423Z"
+  }
+]

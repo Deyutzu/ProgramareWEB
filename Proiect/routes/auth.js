@@ -4,13 +4,17 @@ const { users } = require('../db');
 
 // GET /register
 router.get('/register', (req, res) => {
-  if (req.session.user) return res.redirect('/pensiune');
+  if (req.session.user) {
+    const target = req.session.user.role === 'admin' ? '/pensiune' : '/client';
+    return res.redirect(target);
+  }
   res.render('register', { error: null, formData: {} });
 });
 
 // POST /register
 router.post('/register', async (req, res) => {
   const { username, password, nume } = req.body;
+  const userRole = 'client';
 
   // Validari simple
   if (!username || !password || !nume) {
@@ -34,21 +38,25 @@ router.post('/register', async (req, res) => {
     });
   }
 
-  const user = await users.create(username, password, nume);
+  const user = await users.create(username, password, nume, userRole);
 
   // Pornire sesiune
-  req.session.user = { id: user.id, username: user.username, nume: user.nume };
+  req.session.user = { id: user.id, username: user.username, nume: user.nume, role: user.role };
   req.session.views = 0;
 
   // Cookie preferinta tema (default: light)
   res.cookie('tema', 'light', { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: false });
 
-  res.redirect('/pensiune');
+  const target = user.role === 'admin' ? '/pensiune' : '/client';
+  res.redirect(target);
 });
 
 // GET /login
 router.get('/login', (req, res) => {
-  if (req.session.user) return res.redirect('/pensiune');
+  if (req.session.user) {
+    const target = req.session.user.role === 'admin' ? '/pensiune' : '/client';
+    return res.redirect(target);
+  }
   res.render('login', { error: null, formData: {} });
 });
 
@@ -80,7 +88,7 @@ router.post('/login', async (req, res) => {
   }
 
   // Sesiune
-  req.session.user = { id: user.id, username: user.username, nume: user.nume };
+  req.session.user = { id: user.id, username: user.username, nume: user.nume, role: user.role || 'client' };
   req.session.views = 0;
 
   // Setăm cookie de tema dacă nu există deja
@@ -88,7 +96,8 @@ router.post('/login', async (req, res) => {
     res.cookie('tema', 'light', { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: false });
   }
 
-  const redirectTo = req.session.redirectTo || '/pensiune';
+  const target = user.role === 'admin' ? '/pensiune' : '/client';
+  const redirectTo = req.session.redirectTo || target;
   delete req.session.redirectTo;
   res.redirect(redirectTo);
 });

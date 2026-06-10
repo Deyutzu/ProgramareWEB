@@ -1,5 +1,10 @@
-// Date de demo pentru rezervarile pensiunii
-const rezervari = [
+const fs = require('fs');
+const path = require('path');
+
+const filePath = path.join(__dirname, 'data', 'rezervari.json');
+
+// Date de demo implicite pentru rezervarile pensiunii
+const defaultRezervari = [
   {
     id: '1',
     numeOaspete: 'Anton Mihai',
@@ -77,6 +82,27 @@ const camere = [
   { numar: '303', tip: 'Suite', etaj: 3, pretNoapte: 380, status: 'libera', facilitati: ['TV', 'AC', 'WiFi', 'Jacuzzi', 'Vedere panoramica'] },
 ];
 
+let rezervari = [];
+try {
+  if (fs.existsSync(filePath)) {
+    rezervari = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+  } else {
+    rezervari = defaultRezervari;
+    saveRezervari();
+  }
+} catch (err) {
+  console.error("Eroare la citirea rezervari.json:", err);
+  rezervari = defaultRezervari;
+}
+
+function saveRezervari() {
+  try {
+    fs.writeFileSync(filePath, JSON.stringify(rezervari, null, 2), 'utf8');
+  } catch (err) {
+    console.error("Eroare la salvarea rezervari.json:", err);
+  }
+}
+
 function getAll() {
   return rezervari;
 }
@@ -90,7 +116,14 @@ function getByStatus(status) {
 }
 
 function getCamere() {
-  return camere;
+  // Calculam dinamic statusul camerei
+  return camere.map(c => {
+    const isOccupied = rezervari.some(r => r.camera === c.numar && r.status === 'confirmata');
+    return {
+      ...c,
+      status: isOccupied ? 'ocupata' : 'libera'
+    };
+  });
 }
 
 function getTotalVenit() {
@@ -99,4 +132,33 @@ function getTotalVenit() {
     .reduce((sum, r) => sum + r.nrNopti * r.pretNoapte, 0);
 }
 
-module.exports = { getAll, getById, getByStatus, getCamere, getTotalVenit };
+function create(data) {
+  const nouaRezervare = {
+    id: Date.now().toString(),
+    numeOaspete: data.numeOaspete,
+    camera: data.camera,
+    tipCamera: data.tipCamera || 'Single',
+    checkIn: data.checkIn,
+    checkOut: data.checkOut,
+    nrNopti: parseInt(data.nrNopti, 10) || 1,
+    pretNoapte: parseFloat(data.pretNoapte) || 150,
+    status: data.status || 'in_asteptare',
+    telefon: data.telefon || '',
+    observatii: data.observatii || ''
+  };
+  rezervari.push(nouaRezervare);
+  saveRezervari();
+  return nouaRezervare;
+}
+
+function updateStatus(id, status) {
+  const rez = rezervari.find(r => r.id === id);
+  if (rez) {
+    rez.status = status;
+    saveRezervari();
+    return rez;
+  }
+  return null;
+}
+
+module.exports = { getAll, getById, getByStatus, getCamere, getTotalVenit, create, updateStatus };

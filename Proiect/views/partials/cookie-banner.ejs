@@ -1,0 +1,60 @@
+<div id="cookie-companion" class="cookie-companion hidden">
+  <div class="cookie-companion-header">
+    <div class="cookie-icon">🍪</div>
+    <div class="cookie-title-wrap">
+      <h3>Confidențialitate &amp; Cookies</h3>
+      <p>Alege cum dorești să îți personalizezi experiența pe Vila Bradu.</p>
+    </div>
+  </div>
+  
+  <div class="cookie-companion-body">
+    <div class="cookie-options-toggle" id="cookie-customize-btn">
+      <span>Personalizează preferințele</span>
+      <span class="chevron">▼</span>
+    </div>
+    
+    <div class="cookie-options-details hidden" id="cookie-details-panel">
+      <!-- Opțiunea 1: Esențiale -->
+      <div class="cookie-opt">
+        <div class="cookie-opt-info">
+          <strong>Esențiale (Sesiune)</strong>
+          <p>Necesare pentru funcționarea site-ului și autentificare.</p>
+        </div>
+        <label class="switch">
+          <input type="checkbox" checked disabled>
+          <span class="slider"></span>
+        </label>
+      </div>
+      
+      <!-- Opțiunea 2: Preferințe (Aspect) -->
+      <div class="cookie-opt">
+        <div class="cookie-opt-info">
+          <strong>Preferințe de Aspect</strong>
+          <p>Pentru memorarea temei vizuale (Luminos/Întunecat).</p>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="cookie-opt-preferences" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <!-- Opțiunea 3: Experiență Real-Time -->
+      <div class="cookie-opt">
+        <div class="cookie-opt-info">
+          <strong>Activitate Live &amp; Istoric</strong>
+          <p>Pentru chat-ul echipei și lista de rezervări vizualizate recent.</p>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="cookie-opt-experience" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="cookie-companion-footer">
+    <button class="btn-cookie btn-cookie-secondary" id="cookie-btn-reject">Refuză opționale</button>
+    <button class="btn-cookie btn-cookie-primary" id="cookie-btn-accept-all">Acceptă tot</button>
+    <button class="btn-cookie btn-cookie-save hidden" id="cookie-btn-save">Salvează selecția</button>
+  </div>
+</div>

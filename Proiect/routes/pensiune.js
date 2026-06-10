@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const requireLogin = require('../middleware/requireLogin');
+const requireAdmin = require('../middleware/requireAdmin');
 const db = require('../db/rezervari');
 
-// Toate rutele din acest router sunt protejate
-router.use(requireLogin);
+// Toate rutele din acest router sunt protejate de requireAdmin
+router.use(requireAdmin);
 
 // GET /pensiune — dashboard principal
 router.get('/', (req, res) => {

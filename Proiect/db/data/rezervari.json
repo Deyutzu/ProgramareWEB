@@ -1,0 +1,80 @@
+[
+  {
+    "id": "1781089520803",
+    "numeOaspete": "Sofron Coman",
+    "camera": "102",
+    "tipCamera": "Single",
+    "checkIn": "2026-06-12",
+    "checkOut": "2026-06-14",
+    "nrNopti": 3,
+    "pretNoapte": 150,
+    "status": "confirmata",
+    "telefon": "07456321112",
+    "observatii": "mic dejun inclus"
+  },
+  {
+    "id": "1",
+    "numeOaspete": "Anton Mihai",
+    "camera": "101",
+    "tipCamera": "Single",
+    "checkIn": "2024-06-15",
+    "checkOut": "2024-06-18",
+    "nrNopti": 3,
+    "pretNoapte": 150,
+    "status": "finalizata",
+    "telefon": "0722 111 222",
+    "observatii": "Preferinta etaj 1"
+  },
+  {
+    "id": "2",
+    "numeOaspete": "Demian Vasile",
+    "camera": "205",
+    "tipCamera": "Double",
+    "checkIn": "2024-06-17",
+    "checkOut": "2024-06-20",
+    "nrNopti": 3,
+    "pretNoapte": 220,
+    "status": "in_asteptare",
+    "telefon": "0733 444 555",
+    "observatii": "Aniversare nunta"
+  },
+  {
+    "id": "3",
+    "numeOaspete": "Alex Tomai",
+    "camera": "302",
+    "tipCamera": "Suite",
+    "checkIn": "2024-06-20",
+    "checkOut": "2024-06-25",
+    "nrNopti": 5,
+    "pretNoapte": 380,
+    "status": "finalizata",
+    "telefon": "0744 777 888",
+    "observatii": "Mic dejun inclus"
+  },
+  {
+    "id": "4",
+    "numeOaspete": "Aurel Craciun",
+    "camera": "104",
+    "tipCamera": "Double",
+    "checkIn": "2024-06-10",
+    "checkOut": "2024-06-13",
+    "nrNopti": 3,
+    "pretNoapte": 220,
+    "status": "finalizata",
+    "telefon": "0755 999 000",
+    "observatii": ""
+  },
+  {
+    "id": "5",
+    "numeOaspete": "Rusu Raul",
+    "camera": "201",
+    "tipCamera": "Single",
+    "checkIn": "2024-06-22",
+    "checkOut": "2024-06-24",
+    "nrNopti": 2,
+    "pretNoapte": 150,
+    "status": "finalizata",
+    "telefon": "0766 123 456",
+    "observatii": "Sosire tarzie ~22:00"
+  }
+]

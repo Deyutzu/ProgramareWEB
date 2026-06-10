@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard — Vila Bradu</title>
+  <title>Portal Client — Vila Bradu</title>
   <link rel="stylesheet" href="/css/style.css">
   <script>
     window.currentUserNume = "<%= user.nume %>";
@@ -16,8 +16,7 @@
 <nav class="nav">
   <a href="/" class="nav-brand">Vila <span>Bradu</span></a>
   <ul class="nav-links">
-    <li><a href="/pensiune">Dashboard</a></li>
-    <li><a href="/pensiune/camere">Camere</a></li>
+    <li><a href="/client">Portalul Meu</a></li>
     <li><a href="/logout">Deconectare</a></li>
     <li class="tema-toggle">
       <form action="/pensiune/tema" method="POST">
@@ -34,10 +33,10 @@
 <div class="session-bar">
   <div>
     <span class="dot"></span>
-    Bun venit, <strong><%= user.nume %></strong> — sesiune activă ca <em><%= user.username %></em>
+    Conectat ca Client: <strong><%= user.nume %></strong>
   </div>
   <div>
-    Vizite în această sesiune: <strong><%= views %></strong>
+    Vizite portal: <strong><%= views %></strong>
     &nbsp;·&nbsp;
     <% if (tema === 'dark') { %>
       🌙 Temă întunecată activă
@@ -54,8 +53,7 @@
     <aside class="sidebar">
       <div class="sidebar-label">Navigare</div>
       <nav>
-        <a href="/pensiune" class="active">📋 Dashboard</a>
-        <a href="/pensiune/camere">🏠 Camere</a>
+        <a href="/client" class="active">📋 Rezervările Mele</a>
       </nav>
       
       <!-- Widget cookies: Rezervari vizualizate recent -->
@@ -74,47 +72,17 @@
 
     <!-- Main content -->
     <main>
-      <span class="section-subtitle">Pensiunea Vila Bradu</span>
+      <span class="section-subtitle">Portalul tău de client</span>
       <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap: 1rem; margin-bottom: 1rem;">
-        <h1 class="section-title" style="margin:0;">Bun venit, <%= user.nume.split(' ')[0] %>!</h1>
+        <h1 class="section-title" style="margin:0;">Salutare, <%= user.nume.split(' ')[0] %>!</h1>
         <button class="btn btn-primary" id="btn-open-modal" style="padding:0.5rem 1.25rem; font-size:0.78rem;">+ Rezervare Nouă</button>
       </div>
       <hr class="divider">
 
-      <!-- Statistici -->
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-icon">📋</div>
-          <div class="stat-value"><%= stats.total %></div>
-          <div class="stat-label">Total rezervări</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon">✅</div>
-          <div class="stat-value"><%= stats.confirmate %></div>
-          <div class="stat-label">Confirmate</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon">⏳</div>
-          <div class="stat-value"><%= stats.inAsteptare %></div>
-          <div class="stat-label">În așteptare</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon">💰</div>
-          <div class="stat-value"><%= stats.venit.toLocaleString('ro-RO') %></div>
-          <div class="stat-label">Venit estimat (RON)</div>
-        </div>
-      </div>
-
-      <!-- Filtrare live -->
-      <div class="search-wrap">
-        <span class="search-icon">🔍</span>
-        <input type="text" id="dashboard-search" class="search-input" placeholder="Caută după nume oaspete, număr cameră, nopți sau status...">
-      </div>
-
-      <!-- Lista rezervari -->
-      <div class="table-wrap">
+      <!-- Lista rezervari client -->
+      <div class="table-wrap" style="margin-bottom: 3rem;">
         <div class="table-header">
-          <h2>Rezervări recente</h2>
+          <h2>Rezervările mele</h2>
           <span style="font-size:0.78rem;color:var(--text-light)">
             <%= rezervari.length %> înregistrări
           </span>
@@ -128,72 +96,79 @@
               <th>Check-in</th>
               <th>Check-out</th>
               <th>Nopți</th>
+              <th>Preț Total</th>
               <th>Status</th>
               <th>Detalii</th>
             </tr>
           </thead>
           <tbody>
-            <% rezervari.reverse().forEach(function(r) { %>
-              <tr data-id="<%= r.id %>">
-                <td><strong><%= r.numeOaspete %></strong></td>
-                <td><%= r.camera %></td>
-                <td><%= r.tipCamera %></td>
-                <td><%= r.checkIn %></td>
-                <td><%= r.checkOut %></td>
-                <td><%= r.nrNopti %></td>
-                <td>
-                  <select class="table-select" data-id="<%= r.id %>">
-                    <option value="in_asteptare" <%= r.status === 'in_asteptare' ? 'selected' : '' %>>În așteptare</option>
-                    <option value="confirmata" <%= r.status === 'confirmata' ? 'selected' : '' %>>Confirmata</option>
-                    <option value="finalizata" <%= r.status === 'finalizata' ? 'selected' : '' %>>Finalizata</option>
-                  </select>
-                </td>
-                <td>
-                  <a href="/pensiune/rezervari/<%= r.id %>">Vezi →</a>
+            <% if (rezervari.length === 0) { %>
+              <tr>
+                <td colspan="9" style="text-align: center; color: var(--text-light); padding: 2rem;">
+                  Nu ai nicio rezervare activă. Apasă pe "+ Rezervare Nouă" pentru a rezerva o cameră!
                 </td>
               </tr>
-            <% }); %>
+            <% } else { %>
+              <% rezervari.reverse().forEach(function(r) { %>
+                <tr data-id="<%= r.id %>">
+                  <td><strong><%= r.numeOaspete %></strong></td>
+                  <td><%= r.camera %></td>
+                  <td><%= r.tipCamera %></td>
+                  <td><%= r.checkIn %></td>
+                  <td><%= r.checkOut %></td>
+                  <td><%= r.nrNopti %></td>
+                  <td><strong><%= (r.nrNopti * r.pretNoapte).toLocaleString('ro-RO') %> RON</strong></td>
+                  <td>
+                    <span class="badge badge-<%= r.status %>">
+                      <%= r.status === 'in_asteptare' ? 'În așteptare' : r.status.charAt(0).toUpperCase() + r.status.slice(1) %>
+                    </span>
+                  </td>
+                  <td>
+                    <a href="/pensiune/rezervari/<%= r.id %>">Vezi →</a>
+                  </td>
+                </tr>
+              <% }); %>
+            <% } %>
           </tbody>
         </table>
       </div>
 
-      <!-- Sectiune Live Chat / Activitate si informatii -->
+      <!-- Asistent Virtual Chatbot -->
       <div class="divider"></div>
       
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start; margin-top:2rem;">
         <div>
-          <h2 style="font-family: var(--font-display); font-size:1.6rem; color:var(--dark); margin-bottom:0.5rem;">Activitate Live</h2>
-          <p style="color:var(--text-light); font-size:0.88rem; line-height:1.6;">
-            Modificările aduse statusurilor rezervărilor sau crearea unora noi vor fi propagate instantaneu în interfața colegilor voștri logați. De asemenea, puteți comunica rapid folosind mesageria de personal din dreapta.
+          <h2 style="font-family: var(--font-display); font-size:1.6rem; color:var(--dark); margin-bottom:0.5rem;">Asistent Virtual Inteligent</h2>
+          <p style="color:var(--text-light); font-size:0.88rem; line-height:1.6; margin-bottom: 1rem;">
+            Discută direct cu asistentul nostru virtual pentru a afla tarifele camerelor, informații de contact sau pentru a verifica ce camere sunt libere la o anumită dată.
           </p>
-          <div style="margin-top: 1rem; padding: 1rem; border: 1px dashed var(--border); border-radius: var(--radius); font-size:0.8rem; color: var(--text-light);">
-            💡 <strong>Sfat Cookies:</strong> Puteți vedea în partea stângă ultimele rezervări pe care le-ați accesat. Istoricul se salvează direct în browser în scopul facilitării navigării rapide.
+          <div style="padding: 1rem; background: var(--warm-white); border: 1px solid var(--border); border-radius: var(--radius); font-size:0.8rem; line-height: 1.5; color: var(--text);">
+            💬 <strong>Încearcă să scrii:</strong>
+            <ul style="margin-left: 1.25rem; margin-top: 0.25rem; color: var(--text-light);">
+              <li>"salut"</li>
+              <li>"care sunt prețurile?"</li>
+              <li>"contact pensiune"</li>
+              <li>"camere libere pe 2024-06-15" (folosind formatul YYYY-MM-DD)</li>
+            </ul>
+            <div style="margin-top:0.75rem; border-top:1px dashed var(--border); padding-top:0.5rem; font-size:0.75rem; font-style:italic; color:var(--text-light);">
+              Notă: Dacă asistentul nu cunoaște răspunsul la o întrebare specifică, discuția va fi preluată automat de un operator din recepție!
+            </div>
           </div>
         </div>
 
         <!-- Chat Widget -->
         <div class="chat-widget" id="chat-widget-box">
           <div class="chat-header">
-            <div style="display:flex; align-items:center; gap:0.5rem;">
-              <span>Centru Comunicații Staff</span>
-              <span id="chat-alert-badge" class="chat-alert-badge hidden">🚨 Suport Activ</span>
-            </div>
-            <span class="chat-status"><span class="pulse-dot"></span> Se conectează...</span>
+            <span>Asistent Virtual Vila Bradu</span>
+            <span class="chat-status"><span class="pulse-dot"></span> Online</span>
           </div>
-          
-          <!-- Selector canal chat (Staff vs Suport Clienti) -->
-          <div id="admin-chat-target-container" style="padding: 0.5rem 1rem; background: var(--cream); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem;">
-            <label for="admin-chat-target" style="font-weight: 500; text-transform: uppercase; color: var(--text-light); font-size: 0.65rem; letter-spacing: 0.05em;">Destinatar:</label>
-            <select id="admin-chat-target" style="flex-grow: 1; padding: 0.2rem 0.5rem; background: var(--warm-white); border: 1px solid var(--border); font-family: var(--font-body); font-size: 0.75rem; border-radius: 2px; color: var(--dark); outline: none;">
-              <option value="staff" selected>👥 Toată Echipa (Staff Chat)</option>
-            </select>
-          </div>
-
           <div class="chat-messages" id="chat-messages-container">
-            <!-- Mesaje live prin WebSocket -->
+            <div class="chat-msg system">
+              <div class="chat-msg-bubble">🤖 Asistentul este pregătit. Scrie un mesaj mai jos pentru a începe.</div>
+            </div>
           </div>
           <div class="chat-input-area">
-            <input type="text" id="chat-msg-input" placeholder="Scrie un mesaj...">
+            <input type="text" id="chat-msg-input" placeholder="Întreabă asistentul sau scrie staff-ului...">
             <button id="chat-msg-send">Trimite</button>
           </div>
         </div>
@@ -213,8 +188,9 @@
     <form id="add-booking-form">
       <div class="modal-body">
         <div class="form-group">
+          <!-- Autopopulam cu numele clientului logat, dar lasam campul editabil in caz ca rezerva pt altcineva -->
           <label for="numeOaspete">Nume Oaspete</label>
-          <input type="text" id="numeOaspete" name="numeOaspete" required placeholder="ex: Anton Mihai">
+          <input type="text" id="numeOaspete" name="numeOaspete" required value="<%= user.nume %>">
         </div>
         
         <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
@@ -231,7 +207,7 @@
             </select>
           </div>
           <div>
-            <label for="telefon">Telefon oaspete</label>
+            <label for="telefon">Telefon de contact</label>
             <input type="text" id="telefon" name="telefon" placeholder="ex: 0722 111 222">
           </div>
         </div>
@@ -253,7 +229,6 @@
             <input type="number" id="nrNopti" name="nrNopti" min="1" value="3" required>
           </div>
           <div>
-            <!-- hidden default pending status -->
             <input type="hidden" name="status" value="in_asteptare">
           </div>
         </div>
@@ -265,7 +240,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" id="btn-cancel-modal">Renunță</button>
-        <button type="submit" class="btn btn-primary" id="btn-submit-booking">Salvează Rezervarea</button>
+        <button type="submit" class="btn btn-primary" id="btn-submit-booking">Trimite Cerere Rezervare</button>
       </div>
     </form>
   </div>

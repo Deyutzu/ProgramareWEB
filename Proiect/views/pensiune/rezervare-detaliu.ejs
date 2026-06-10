@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Rezervare #<%= rezervare.id %> — Vila Bradu</title>
   <link rel="stylesheet" href="/css/style.css">
+  <script>
+    window.currentUserNume = "<%= user.nume %>";
+    window.currentUserRole = "<%= user.role %>";
+    window.currentUserId = "<%= user.username %>";
+  </script>
 </head>
 <body>
 
@@ -121,5 +126,48 @@
   </div>
 </div>
 
+<!-- Widget consimtamant cookies -->
+<%- include('../partials/cookie-banner') %>
+
+<!-- Client JavaScript -->
+<script src="/js/app-client.js"></script>
+
+<!-- Logica de salvare vizualizare recenta in cookies -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Daca userul a respins cookies de experienta/istoric, nu salvam
+    if (getCookie('cookie_pref_experience') === 'false') {
+      return;
+    }
+
+    const currentItem = {
+      id: "<%= rezervare.id %>",
+      nume: "<%= rezervare.numeOaspete %>",
+      camera: "<%= rezervare.camera %>"
+    };
+
+    let items = [];
+    const existingCookie = getCookie('recentRezervari');
+    if (existingCookie) {
+      try {
+        items = JSON.parse(decodeURIComponent(existingCookie));
+      } catch(e) {
+        console.error("Eroare citire cookie recentRezervari:", e);
+      }
+    }
+
+    // Excludem duplicatele si adaugam elementul curent in fata
+    items = items.filter(x => x.id !== currentItem.id);
+    items.unshift(currentItem);
+
+    // Pastram ultimele 3 intrari
+    if (items.length > 3) {
+      items = items.slice(0, 3);
+    }
+
+    // Salvam pentru 7 zile
+    setCookie('recentRezervari', encodeURIComponent(JSON.stringify(items)), 7);
+  });
+</script>
 </body>
 </html>
